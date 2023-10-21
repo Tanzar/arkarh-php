@@ -2,6 +2,8 @@
 
 namespace App\Classes\Units\Abstracts;
 
+use App\Classes\Abilities\Shared\Abilities;
+use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Modifiers\Category;
 use App\Classes\Modifiers\Modifier;
 use App\Classes\Modifiers\Modifiers;
@@ -49,12 +51,15 @@ class Unit
 
     private Modifiers $modifiers;
 
+    private Abilities $abilities;
+
     public function __construct(string $scriptName, string $name, string $icon)
     {
         $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
         $this->modifiers = new Modifiers();
+        $this->abilities = new Abilities();
     }
 
     /**
@@ -422,6 +427,11 @@ class Unit
         );
         $damage = $strength * $moraleDamage;
         $this->morale -= $damage;
+    }
+
+    public function addAbility(Ability $ability): void
+    {
+        $this->abilities->add($ability);
     }
 
 

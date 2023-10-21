@@ -2,6 +2,7 @@
 
 namespace App\Classes\Units\Abstracts;
 
+use App\Classes\Abilities\Shared\AbilityBuilder;
 use Illuminate\Support\Collection;
 
 class UnitBuilder
@@ -17,12 +18,15 @@ class UnitBuilder
 
     private Collection $stats;
 
+    private Collection $abilities;
+
     public function __construct(string $scriptName, string $name, string $icon)
     {
         $this->stats = collect();
         $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
+        $this->abilities = collect();
     }
 
     public function attack(int $value): UnitBuilder
@@ -73,6 +77,12 @@ class UnitBuilder
         return $this;
     }
 
+    public function ability(AbilityBuilder $builder): UnitBuilder
+    {
+        $this->abilities->push($builder);
+        return $this;
+    }
+
     public function build(): Unit
     {
         $unit = new Unit(
@@ -83,6 +93,7 @@ class UnitBuilder
         $this->applyOffensive($unit);
         $this->applyDefensive($unit);
         $this->applyStatus($unit);
+        $this->addAbilities($unit);
         return $unit;
     }
 
@@ -119,6 +130,15 @@ class UnitBuilder
         }
         if ($this->stats->has('morale')) {
             $unit->setMorale($this->stats->get('morale'));
+        }
+    }
+
+    private function addAbilities(Unit $unit): void
+    {
+        /** @var AbilityBuilder $builder */
+        foreach ($this->abilities as $builder) {
+            $ability = $builder->build();
+            $unit->addAbility($ability);
         }
     }
 }
