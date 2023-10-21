@@ -17,3 +17,7 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Main/Index');
 });
+
+Route::get('/version', function () {
+    return phpinfo();
+});

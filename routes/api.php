@@ -1,5 +1,7 @@
 <?php
 
+use App\Classes\Modifiers\Category;
+use App\Classes\Modifiers\Modifiers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,5 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/test', function (Request $request) {
-    return ['test'];
+    $mods = new Modifiers();
+    return Category::cases();
 })->name('test');
