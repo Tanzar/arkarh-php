@@ -2,7 +2,9 @@
 
 namespace App\Classes\Factions\Abstracts;
 
+use App\Classes\Units\Abstracts\Unit;
 use App\Classes\Units\Abstracts\UnitPattern;
+use App\Classes\Units\Exceptions\UnitNotFoundException;
 use Illuminate\Support\Collection;
 
 abstract class Faction implements FactionUnitsInterface
@@ -26,6 +28,21 @@ abstract class Faction implements FactionUnitsInterface
         if($this->unitsPatterns->doesntContain($scriptName)) {
             $this->unitsPatterns->put($scriptName, $unit);
         }
+    }
+
+    public function getUnit(string $scriptName): Unit
+    {
+        $pattern = $this->getUnitPattern($scriptName);
+        return $pattern->make();
+    }
+
+    private function getUnitPattern(string $scriptName): UnitPattern
+    {
+        $pattern = $this->unitsPatterns->get($scriptName);
+        if($pattern === null) {
+            throw new UnitNotFoundException($scriptName);
+        }
+        return $pattern;
     }
 
     protected abstract function canPlayerSelect(): bool;

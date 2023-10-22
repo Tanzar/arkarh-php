@@ -3,10 +3,25 @@
 namespace App\Classes\Game;
 
 
-class GameConfig
+class GameConfig extends GameFactory
 {
-    
-    public function __construct() {
+    private ?self $instance = null;
+
+    private function __construct()
+    {
+        parent::__construct();
     }
 
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    protected function factions(FactionsInterface $factions): void
+    {
+
+    }
 }
