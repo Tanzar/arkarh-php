@@ -9,6 +9,8 @@ use App\Classes\Modifiers\Modifier;
 use App\Classes\Modifiers\Modifiers;
 use App\Classes\Shared\Types\Dispells;
 use App\Classes\Shared\Types\School;
+use App\Classes\Tag\Unit\Tag;
+use App\Classes\Tag\Unit\Tags;
 
 class Unit 
 {
@@ -52,6 +54,8 @@ class Unit
     private Modifiers $modifiers;
 
     private Abilities $abilities;
+
+    private Tags $tags;
 
     public function __construct(string $scriptName, string $name, string $icon)
     {
@@ -432,6 +436,15 @@ class Unit
     public function addAbility(Ability $ability): void
     {
         $this->abilities->add($ability);
+    }
+
+    public function addTag(Tag $tag): void
+    {
+        $this->tags->add($tag);
+        $modifiers = $tag->getModifiers();
+        foreach ($modifiers as $modifier) {
+            $this->modifiers->add($modifier);
+        }
     }
 
 

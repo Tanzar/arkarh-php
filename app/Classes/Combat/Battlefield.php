@@ -4,7 +4,7 @@ namespace App\Classes\Combat;
 
 class Battlefield
 {
-    private self $instance = null;
+    private ?self $instance = null;
 
     private function __construct()
     {}
