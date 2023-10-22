@@ -3,6 +3,7 @@
 namespace App\Classes\Units\Abstracts;
 
 use App\Classes\Abilities\Shared\AbilityBuilder;
+use App\Classes\Tag\Unit\Tag;
 use Illuminate\Support\Collection;
 
 class UnitBuilder
@@ -20,6 +21,8 @@ class UnitBuilder
 
     private Collection $abilities;
 
+    private Collection $tags;
+
     public function __construct(string $scriptName, string $name, string $icon)
     {
         $this->stats = collect();
@@ -27,6 +30,7 @@ class UnitBuilder
         $this->name = $name;
         $this->icon = $icon;
         $this->abilities = collect();
+        $this->tags = collect();
     }
 
     public function attack(int $value): UnitBuilder
@@ -83,6 +87,12 @@ class UnitBuilder
         return $this;
     }
 
+    public function tag(Tag $tag): UnitBuilder
+    {
+        $this->tags->push($tag);
+        return $this;
+    }
+
     public function build(): Unit
     {
         $unit = new Unit(
@@ -94,6 +104,7 @@ class UnitBuilder
         $this->applyDefensive($unit);
         $this->applyStatus($unit);
         $this->addAbilities($unit);
+        $this->addTags($unit);
         return $unit;
     }
 
@@ -139,6 +150,14 @@ class UnitBuilder
         foreach ($this->abilities as $builder) {
             $ability = $builder->build();
             $unit->addAbility($ability);
+        }
+    }
+
+    private function addTags(Unit $unit): void
+    {
+        /** @var Tag $tag */
+        foreach ($this->tags as $tag) {
+            $unit->addTag($tag);
         }
     }
 }
