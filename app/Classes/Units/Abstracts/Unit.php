@@ -4,6 +4,7 @@ namespace App\Classes\Units\Abstracts;
 
 use App\Classes\Abilities\Shared\Abilities;
 use App\Classes\Abilities\Shared\Ability;
+use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Modifiers\Category;
 use App\Classes\Modifiers\Modifier;
 use App\Classes\Modifiers\Modifiers;
@@ -11,6 +12,7 @@ use App\Classes\Shared\Types\Dispells;
 use App\Classes\Shared\Types\School;
 use App\Classes\Tag\Unit\Tag;
 use App\Classes\Tag\Unit\Tags;
+use App\Classes\Units\Escape\Standard;
 
 class Unit 
 {
@@ -59,6 +61,8 @@ class Unit
 
     private bool $isAttacker = false;
 
+    private EscapeStrategy $escapeStrategy;
+
     public function __construct(string $scriptName, string $name, string $icon)
     {
         $this->scriptName = $scriptName;
@@ -66,6 +70,8 @@ class Unit
         $this->icon = $icon;
         $this->modifiers = new Modifiers();
         $this->abilities = new Abilities();
+        $this->tags = new Tags();
+        $this->escapeStrategy = new Standard();
     }
 
     /**
@@ -222,6 +228,14 @@ class Unit
             $this->speed = $speed;
         }
     }
+    
+    /**
+     * Get the value of maxMorale
+     */ 
+    public function getMaxMorale()
+    {
+        return $this->maxMorale;
+    }
 
     /**
      * Get the value of morale
@@ -338,11 +352,13 @@ class Unit
 
     public function dispellNegatives(Dispells $dispell): bool
     {
+        $this->act(Trigger::Dispell);
         return $this->modifiers->dispellNegatives($dispell);
     }
     
     public function dispellPositivess(Dispells $dispell): bool
     {
+        $this->act(Trigger::Dispell);
         return $this->modifiers->dispellNegatives($dispell);
     }
 
@@ -364,20 +380,29 @@ class Unit
      */
     public function takeDamage(int $damage, School $school, Unit $source): int
     {
-        if ($this->modifiers->haveDamageImmunity($school)) {
-            return 0;
-        }
-        $damage = $this->calculateDamageMultiplier($damage, $school);
-        if ($school === School::Physical) {
-            $damage = $this->reduceDamageByArmor($damage, $source);
-        } else {
-            $damage = $this->reduceDamageByWard($damage, $source);
+        if ($this->isAlive()) {
+            if ($this->modifiers->haveDamageImmunity($school)) {
+                return 0;
+            }
+            $damage = $this->calculateDamageMultiplier($damage, $school);
+            if ($school === School::Physical) {
+                $damage = $this->reduceDamageByArmor($damage, $source);
+            } else {
+                $damage = $this->reduceDamageByWard($damage, $source);
 
+            }
+            $damage = $this->limitDamage($damage);
+            $healthLoss = min($this->health, $damage);
+            if ($healthLoss > 0) {
+                $this->act(Trigger::DamageTake);
+            }
+            $this->health -= $healthLoss;
+            if ($this->isDead()) {
+                $this->act(Trigger::Death);
+            }
+            return $healthLoss;
         }
-        $damage = $this->limitDamage($damage);
-        $healthLoss = min($this->health, $damage);
-        $this->health -= $healthLoss;
-        return $healthLoss;
+        return 0;
     }
 
     private function calculateDamageMultiplier(int $damage, School $school): float
@@ -413,15 +438,21 @@ class Unit
 
     public function heal(int $heal): int
     {
-        $multiplier = 1 + $this->modifiers->getTotalValue(Category::HealTakenMultiplier);
-        if ($multiplier <= 0) {
-            return 0;
+        if ($this->isAlive()) {
+            $multiplier = 1 + $this->modifiers->getTotalValue(Category::HealTakenMultiplier);
+            if ($multiplier <= 0) {
+                return 0;
+            }
+            $heal = $multiplier * $heal;
+            $missingHealth = $this->maxHealth - $this->health;
+            $heal = min($heal, $missingHealth);
+            if ($heal > 0) {
+                $this->act(Trigger::Heal);
+            }
+            $this->health += $heal;
+            return $heal;
         }
-        $heal = $multiplier * $heal;
-        $missingHealth = $this->maxHealth - $this->health;
-        $heal = min($heal, $missingHealth);
-        $this->health += $heal;
-        return $heal;
+        return 0;
     }
 
     public function damageMorale(int $strength = 1): void
@@ -474,9 +505,21 @@ class Unit
         return $this->getHealth() <= 0;
     }
 
-    public function canFight(): bool
+    public function isAlive(): bool
     {
-        return false;
+        return !$this->isDead();
+    }
+
+    public function canFight(bool $onReserve): bool
+    {
+        return $this->escapeStrategy->canFight($this, $onReserve);
+    }
+
+    public function act(Trigger $trigger = Trigger::Action): void
+    {
+        if ($this->isAlive()) {
+            $this->abilities->act($trigger);
+        }
     }
 
     private function getModifiedValue(int $base, Category $category, ?float $min = null, ?float $max = null): float
