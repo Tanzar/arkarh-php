@@ -57,6 +57,8 @@ class Unit
 
     private Tags $tags;
 
+    private bool $isAttacker = false;
+
     public function __construct(string $scriptName, string $name, string $icon)
     {
         $this->scriptName = $scriptName;
@@ -447,6 +449,35 @@ class Unit
         }
     }
 
+    public function setAttacker(): void
+    {
+        $this->isAttacker = true;
+    }
+
+    public function isAttacker(): bool
+    {
+        return $this->isAttacker;
+    }
+
+    public function setDefender(): void
+    {
+        $this->isAttacker = false;
+    }
+
+    public function isDefender(): bool
+    {
+        return !$this->isAttacker;
+    }
+
+    public function isDead(): bool
+    {
+        return $this->getHealth() <= 0;
+    }
+
+    public function canFight(): bool
+    {
+        return false;
+    }
 
     private function getModifiedValue(int $base, Category $category, ?float $min = null, ?float $max = null): float
     {

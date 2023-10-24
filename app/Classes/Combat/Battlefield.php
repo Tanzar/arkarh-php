@@ -6,15 +6,23 @@ class Battlefield
 {
     private ?self $instance = null;
 
-    private function __construct()
-    {}
+    private Side $attackers;
 
-    public static function getInstance(): self
+    private Side $defenders;
+
+    private function __construct(Side $attackers, Side $defenders)
+    {
+        $this->attackers = $attackers;
+        $this->defenders = $defenders;
+    }
+
+    public static function getInstance(Side $attackers = null, Side $defenders = null): self
     {
         if (self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self($attackers, $defenders);
         }
         return self::$instance;
     }
+    
     
 }

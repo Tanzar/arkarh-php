@@ -18,5 +18,18 @@ class ArmyPattern
         $this->back = $back;
     }
 
-    
+    public function getReserve(): array
+    {
+        return $this->reserve;
+    }
+
+    public function getBack(): array
+    {
+        return $this->back;
+    }
+
+    public function getFront(): array
+    {
+        return $this->front;
+    }
 }
