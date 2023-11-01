@@ -3,18 +3,22 @@
 namespace App\Classes\Abilities\Shared;
 
 use App\Classes\Combat\Battlefield;
+use App\Classes\Units\Abstracts\Unit;
 
 abstract class Ability
 {
     private int $charges = -1;
 
-    private int $cooldown = -1;
-    private int $defaultCooldown = -1;
+    private int $cooldown = 0;
+    private int $defaultCooldown = 0;
 
-    private Trigger $trigger;
+    private Trigger $trigger = Trigger::Action;
 
-    public function __construct()
+    private Unit $source;
+
+    public function __construct(Unit $source)
     {
+        $this->source = $source;
     }
 
     /**
@@ -29,8 +33,7 @@ abstract class Ability
 
     public function setUnlimitedCharges(): void
     {
-        $this->defaultCooldown = -1;
-        $this->cooldown = -1;
+        $this->charges = -1;
     }
 
     /**
@@ -41,7 +44,7 @@ abstract class Ability
         if ($cooldown >= 0) {
             $this->defaultCooldown = $cooldown;
         }
-        if ($startCooldown >= 0 && $startCooldown <= $this->defaultCooldown) {
+        if ($startCooldown >= 0) {
             $this->cooldown = $startCooldown;
         }
     }
@@ -60,6 +63,11 @@ abstract class Ability
     protected function setTrigger(Trigger $trigger): void
     {
         $this->trigger = $trigger;
+    }
+
+    public function getSource(): Unit
+    {
+        return $this->source;
     }
 
     public function act(): void

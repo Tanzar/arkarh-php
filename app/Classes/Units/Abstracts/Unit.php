@@ -436,6 +436,12 @@ class Unit
         return $damage;
     }
 
+    /**
+     * Attempt to heal unit for given amount
+     *
+     * @param integer $heal amount of health to heal target for
+     * @return integer amount of health restored
+     */
     public function heal(int $heal): int
     {
         if ($this->isAlive()) {
@@ -457,7 +463,7 @@ class Unit
 
     public function damageMorale(int $strength = 1): void
     {
-        $moraleDamage = $this->getModifiedValue(
+        $moraleDamage = -1 * $this->getModifiedValue(
             $this->moraleDamage, 
             Category::MoraleDamage, 
             1
@@ -533,5 +539,15 @@ class Unit
             $value = min($max, $value);
         }
         return $value;
+    }
+
+    /**
+     * Set the value of escapeStrategy
+     *
+     * @return  self
+     */ 
+    public function setEscapeStrategy(EscapeStrategy $escapeStrategy): void
+    {
+        $this->escapeStrategy = $escapeStrategy;
     }
 }

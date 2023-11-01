@@ -2,6 +2,8 @@
 
 namespace App\Classes\Combat;
 
+use App\Classes\Units\Abstracts\Unit;
+
 class Battlefield
 {
     private ?self $instance = null;
@@ -24,5 +26,31 @@ class Battlefield
         return self::$instance;
     }
     
-    
+    public function getOppositeSide(Unit $unit): Side
+    {
+        if ($unit->isAttacker()) {
+            return $this->getDefenders();
+        } else {
+            return $this->getAttackers();
+        }
+    }
+
+    public function getFriendlySide(Unit $unit): Side
+    {
+        if ($unit->isAttacker()) {
+            return $this->getAttackers();
+        } else {
+            return $this->getDefenders();
+        }
+    }
+
+    public function getAttackers(): Side
+    {
+        return $this->attackers;
+    }
+
+    public function getDefenders(): Side
+    {
+        return $this->defenders;
+    }
 }

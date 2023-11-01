@@ -87,12 +87,22 @@ class Side
         return $this->front;
     }
 
+    public function getFrontUnit(int $position): ?Unit
+    {
+        return $this->front->get($position);
+    }
+
     /**
      * Get the value of back
      */ 
     public function getBack(): Collection
     {
         return $this->back;
+    }
+
+    public function getBackUnit(int $position): ?Unit
+    {
+        return $this->back->get($position);
     }
 
     /**
@@ -109,6 +119,11 @@ class Side
     public function getReserves(): Collection
     {
         return $this->reserves;
+    }
+
+    public function getWidth(): int
+    {
+        return $this->combatWidth;
     }
 
     public function getUnitsBySpeed(): Collection
@@ -137,7 +152,7 @@ class Side
      */
     public function refreshUnits(): bool
     {
-        return false;
+        //return false;
     }
 
 
