@@ -63,6 +63,8 @@ class Unit
 
     private EscapeStrategy $escapeStrategy;
 
+    private int $position = -1;
+
     public function __construct(string $scriptName, string $name, string $icon)
     {
         $this->scriptName = $scriptName;
@@ -528,7 +530,7 @@ class Unit
         }
     }
 
-    private function getModifiedValue(int $base, Category $category, ?float $min = null, ?float $max = null): float
+    public function getModifiedValue(int $base, Category $category, ?float $min = null, ?float $max = null): float
     {
         $modifierValue = $this->modifiers->getTotalValue($category);
         $value = $base + $modifierValue;
@@ -549,5 +551,23 @@ class Unit
     public function setEscapeStrategy(EscapeStrategy $escapeStrategy): void
     {
         $this->escapeStrategy = $escapeStrategy;
+    }
+
+    /**
+     * Get the value of position
+     */ 
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    /**
+     * Set the value of position
+     *
+     * @return  self
+     */ 
+    public function setPosition($position): void
+    {
+        $this->position = $position;
     }
 }
