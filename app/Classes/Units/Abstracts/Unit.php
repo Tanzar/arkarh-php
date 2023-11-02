@@ -380,7 +380,7 @@ class Unit
      * @param integer $damage amount to take
      * @return integer health lost, not include overkill
      */
-    public function takeDamage(int $damage, School $school, Unit $source): int
+    public function takeDamage(int $damage, School $school, ?Unit $source = null): int
     {
         if ($this->isAlive()) {
             if ($this->modifiers->haveDamageImmunity($school)) {
@@ -413,19 +413,27 @@ class Unit
         return max(0, $multiplier * $damage);
     }
 
-    private function reduceDamageByArmor(int $damage, Unit $source): float
+    private function reduceDamageByArmor(int $damage, ?Unit $source = null): float
     {
         $armor = $this->getArmor();
-        $ignoreArmor = $source->getIgnoreArmor();
-        $armor = ($ignoreArmor / 100) * $armor;
+        if ($source !== null) {
+            $ignoreArmor = $source->getIgnoreArmor();
+        } else {
+            $ignoreArmor = 0;
+        }
+        $armor = ((100 - $ignoreArmor) / 100) * $armor;
         return ($armor / 100) * $damage;
     }
 
-    private function reduceDamageByWard(int $damage, Unit $source): float
+    private function reduceDamageByWard(int $damage, ?Unit $source = null): float
     {
         $ward = $this->getWard();
-        $ignoreWard = $source->getIgnoreWard();
-        $ward = ($ignoreWard /100) * $ward;
+        if ($source !== null) {
+            $ignoreWard = $source->getIgnoreWard();
+        } else {
+            $ignoreWard = 0;
+        }
+        $ward = ((100 - $ignoreWard) /100) * $ward;
         return ($ward /100) * $damage;
     }
 
@@ -526,7 +534,32 @@ class Unit
     public function act(Trigger $trigger = Trigger::Action): void
     {
         if ($this->isAlive()) {
-            $this->abilities->act($trigger);
+            $this->triggerDamageOverTime();
+            $this->triggerHealOverTime();
+            if ($this->isAlive()) {
+                $this->abilities->act($trigger);
+            }
+        }
+    }
+
+    private function triggerDamageOverTime(): void
+    {
+        $dots = $this->modifiers->getModifiers(Category::DamageOverTime);
+        /** @var Modifier $modifier */
+        foreach ($dots as $modifier) {
+            $value = $modifier->getTotalValue();
+            $damageTaken = $this->takeDamage($value, $modifier->getSchool());
+
+        }
+    }
+
+    private function triggerHealOverTime(): void
+    {
+        $hots = $this->modifiers->getModifiers(Category::HealOverTime);
+        foreach ($hots as $modifier) {
+            $value = $modifier->getTotalValue();
+            $healingTaken = $this->heal($value);
+
         }
     }
 
