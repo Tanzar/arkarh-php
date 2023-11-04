@@ -3,6 +3,7 @@
 namespace App\Classes\Tag\Unit;
 
 use App\Classes\Modifiers\ModifierBuilder;
+use App\Classes\Modifiers\ModifierBuilderContainer;
 
 abstract class Tag
 {
@@ -10,14 +11,22 @@ abstract class Tag
     private string $name;
     private string $uniqueGroup;
 
-    private array $modifiers;
+    private ModifierBuilderContainer $modifiers;
 
-    public function __construct(string $name, string $uniqueGroup)
+    public function __construct()
     {
-        $this->name = $name;
-        $this->uniqueGroup = $uniqueGroup;
-        $this->modifiers = [];
+        $this->name = $this->name();
+        $this->uniqueGroup = $this->uniqueGroup();
+        $this->modifiers = new ModifierBuilderContainer();
+        $this->modifiers($this->modifiers);
     }
+
+    protected abstract function name() : string;
+
+    protected abstract function uniqueGroup() : string;
+
+    protected abstract function modifiers(ModifierBuilderContainer $modifiers): void;
+
 
     public function getName(): string
     {
