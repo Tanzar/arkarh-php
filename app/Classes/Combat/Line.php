@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Classes\Combat;
+
+use App\Classes\Units\Abstracts\Unit;
+
+class Line implements \Iterator
+{
+    private array $units = [];
+    
+    private int $position;
+
+    private int $index;
+
+    private int $startPosition;
+
+    private int $width;
+
+    private bool $isFront;
+
+    public function __construct(int $width, bool $isFront)
+    {
+        $this->units = [];
+        $this->startPosition = ceil($width / 2);
+        $this->position = ceil($width / 2);
+        $this->index = 0;
+        $this->width = $width;
+        $this->isFront = $isFront;
+        for ($i = 0; $i < $width; $i++) {
+            $this->units[$i] = null;
+        }
+    }
+
+    public function add(int $position, Unit $unit): void
+    {
+        $this->units[$position] = $unit;
+    }
+
+    public function get(int $position): ?Unit
+    {
+        return $this->units[$position] ?? null;
+    }
+
+    public function isFront(): bool
+    {
+        return $this->isFront;
+    }
+
+    public function isBack(): bool
+    {
+        return !$this->isFront;
+    }
+
+    public function current(): ?Unit
+    {
+        return $this->units[$this->position];
+    }
+
+    public function next(): void
+    {
+        $this->index++;
+        $this->position = $this->startPosition + ceil($this->index / 2) * (($this->index % 2) ? -1 : 1 );
+    }
+
+    public function key(): int
+    {
+        return $this->position;
+    }
+
+    public function valid(): bool
+    {
+        return $this->index < $this->width;
+    }
+
+    public function rewind(): void
+    {
+        $this->index = 0;
+        $this->position = $this->startPosition;
+    }
+
+}

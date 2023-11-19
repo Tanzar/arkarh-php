@@ -6,9 +6,9 @@ use Illuminate\Support\Collection;
 
 class Side
 {
-    private Collection $front;
+    private Line $front;
     
-    private Collection $back;
+    private Line $back;
 
     private Collection $graveyard;
 
@@ -16,53 +16,40 @@ class Side
 
     private int $combatWidth = 15;
 
+    private int $healReserves = 1;
+
+    private int $morale = 10;
+
+    private Collection $plannedUnits;
+
     public function __construct(ArmyPatterns $armies)
     {
-        $this->front = $this->formLine();
-        $this->back = $this->formLine();
+        $this->front = new Line($this->combatWidth, true);
+        $this->back = new Line($this->combatWidth, false);
         $this->graveyard = new Collection();
         $this->reserves = new Collection();
+        $this->plannedUnits = new Collection();
         $this->positionUnits($armies);
-    }
-
-    private function formLine(): Collection
-    {
-        $line = new Collection();
-        for ($i = 0; $i < $this->combatWidth; $i++) {
-            $line->put($i, null);
-        }
-        return $line;
     }
 
     private function positionUnits(ArmyPatterns $armies): void
     {
         /** @var ArmyPattern $army */
         foreach ($armies->getPatterns() as $army) {
-            $this->setupFront($army);
-            $this->setupBack($army);
+            $this->setupLine($army->getFront(), $this->front);
+            $this->setupLine($army->getBack(), $this->back);
             $this->setupReserves($army);
         }
     }
 
-    private function setupFront(ArmyPattern $army) : void
+    private function setupLine(array $units, Line $line) : void
     {
-        $front = $army->getFront();
-        foreach ($front as $position => $unit) {
-            if ($this->front->get($position) === null) {
-                $this->front->put($position, $unit);
-            } else {
-                $this->reserves->add($unit);
-            }
-
-        }
-    }
-
-    private function setupBack(ArmyPattern $army) : void
-    {
-        $back = $army->getBack();
-        foreach ($back as $position => $unit) {
-            if ($this->back->get($position) === null) {
-                $this->back->put($position, $unit);
+        foreach ($$units as $position => $unit) {
+            if ($unit !== null) {
+                $line->add($position, $unit);
+                if ($this->plannedUnits->doesntContain($unit->getId())) {
+                    $this->plannedUnits->add($unit->getId());
+                }
             } else {
                 $this->reserves->add($unit);
             }
@@ -82,7 +69,7 @@ class Side
     /**
      * Get the value of front
      */ 
-    public function getFront(): Collection
+    public function getFront(): Line
     {
         return $this->front;
     }
@@ -95,7 +82,7 @@ class Side
     /**
      * Get the value of back
      */ 
-    public function getBack(): Collection
+    public function getBack(): Line
     {
         return $this->back;
     }
@@ -129,12 +116,13 @@ class Side
     public function getUnitsBySpeed(): Collection
     {
         $units = new Collection();
-        for ($i = 0; $i < $this->combatWidth; $i++) {
-            $unit = $this->front->get($i);
+        /** @var Unit $unit */
+        foreach ($this->front as $position => $unit) {
             if ($unit !== null) {
                 $units->add($unit);
             }
-            $unit = $this->back->get($i);
+        }
+        foreach ($this->back as $position => $unit) {
             if ($unit !== null) {
                 $units->add($unit);
             }
@@ -152,8 +140,78 @@ class Side
      */
     public function refreshUnits(): bool
     {
-        //return false;
+        $this->regenerateReserves();
+        $canFrontFight = $this->checkLine($this->front, true);
+        $canBackFight = $this->checkLine($this->back, false);
+        return $canBackFight || $canFrontFight;
     }
 
+    private function regenerateReserves(): void
+    {
+        /** @var Unit $unit */
+        foreach ($this->reserves as $unit) {
+            $unit->heal($this->healReserves);
+            $unit->increaseMorale($this->morale);
+        }
+    }
 
+    private function checkLine(Line $line, bool $front): bool
+    {
+        $canFight = false;
+        /** @var ?Unit $unit */
+        foreach ($line as $position => $unit) {
+            if ($unit === null || !$unit->canFight(false)) {
+                $replacement = $this->getReserveUnit($unit, $line->isFront());
+                if ($unit->isAlive()) {
+                    $this->reserves->add($unit);
+                } else {
+                    $this->graveyard->add($unit);
+                }
+                if ($replacement !== null) {
+                    $canFight = true;
+                    $line->add($position, $replacement);
+                }
+            }
+        }
+        return $canFight;
+    }
+
+    private function getReserveUnit(?Unit $unit, bool $front): ?Unit
+    {
+        $replacementKey = null;
+        $replacementUnit = null;
+        foreach ($this->reserves as $key => $replacement) {
+            if ($this->canReplace($replacement, $front)) {
+                if ($unit === null && $this->isNotPlanned($replacement)){
+                    $replacementKey = $key;
+                    $replacementUnit = $replacement;
+                    break;
+                } elseif (
+                    $unit !== null &&
+                    (
+                        $replacement->getId() === $unit->getId() ||
+                        $this->isNotPlanned($replacement)
+                    )
+                ) {
+                    $replacementKey = $key;
+                    $replacementUnit = $replacement;
+                    break;
+                }
+            }
+        }
+        if ($replacementUnit !== null) {
+            $this->reserves->forget($replacementKey);
+        }
+        return $replacementUnit;
+    }
+
+    private function canReplace(Unit $replacement, bool $front): bool
+    {
+        return $replacement->canFight(true) && $replacement->prefersFront() === $front;
+    }
+
+    private function isNotPlanned(Unit $unit): bool
+    {
+        return $this->plannedUnits->doesntContain($unit->getId());
+    }
 }

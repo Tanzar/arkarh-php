@@ -16,6 +16,8 @@ use App\Classes\Units\Escape\Standard;
 
 class Unit 
 {
+    private int $id;
+
     //Unit script name, must be uniqie at least for faction
     private string $scriptName;
 
@@ -53,6 +55,8 @@ class Unit
 
     private int $threat = 1;
 
+    private bool $prefersFront = false;
+
     private Modifiers $modifiers;
 
     private Abilities $abilities;
@@ -65,8 +69,9 @@ class Unit
 
     private int $position = -1;
 
-    public function __construct(string $scriptName, string $name, string $icon)
+    public function __construct(int $id, string $scriptName, string $name, string $icon)
     {
+        $this->id = $id;
         $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
@@ -74,6 +79,11 @@ class Unit
         $this->abilities = new Abilities();
         $this->tags = new Tags();
         $this->escapeStrategy = new Standard();
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     /**
@@ -316,6 +326,14 @@ class Unit
         }
     }
 
+    public function prefersFront(?bool $prefersFront = null): bool
+    {
+        if ($prefersFront !== null) {
+            $this->prefersFront = $prefersFront;
+        }
+        return $this->prefersFront;
+    }
+
     public function applyModifier(Modifier $modifier): void
     {
         $stacks = $this->modifiers->add($modifier);
@@ -480,6 +498,13 @@ class Unit
         );
         $damage = $strength * $moraleDamage;
         $this->morale -= $damage;
+    }
+
+    public function increaseMorale(int $value): void
+    {
+        if ($value > 0 && $this->maxMorale >= $this->morale) {
+            $this->morale += $value;
+        }
     }
 
     public function addAbility(Ability $ability): void
