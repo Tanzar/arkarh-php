@@ -40,14 +40,15 @@ class Side
             $this->setupLine($army->getBack(), $this->back);
             $this->setupReserves($army);
         }
+        $this->refresh();
     }
 
     private function setupLine(array $units, Line $line) : void
     {
-        foreach ($$units as $position => $unit) {
+        foreach ($units as $position => $unit) {
             if ($unit !== null) {
                 $line->add($position, $unit);
-                if ($this->plannedUnits->doesntContain($unit->getId())) {
+                if ($this->isNotPlanned($unit)) {
                     $this->plannedUnits->add($unit->getId());
                 }
             } else {
@@ -133,17 +134,12 @@ class Side
         return $units;
     }
 
-    /**
-     * Refreshes side
-     *
-     * @return boolean true if side is capable of fighting, false if side cannot fight anymore
-     */
-    public function refreshUnits(): bool
+    public function refresh(): Collection
     {
         $this->regenerateReserves();
-        $canFrontFight = $this->checkLine($this->front, true);
-        $canBackFight = $this->checkLine($this->back, false);
-        return $canBackFight || $canFrontFight;
+        $front = $this->checkLine($this->front);
+        $back = $this->checkLine($this->back);
+        return $back->merge($front);
     }
 
     private function regenerateReserves(): void
@@ -155,25 +151,25 @@ class Side
         }
     }
 
-    private function checkLine(Line $line, bool $front): bool
+    private function checkLine(Line $line): Collection
     {
-        $canFight = false;
+        $fieldedUnits = new Collection();
         /** @var ?Unit $unit */
         foreach ($line as $position => $unit) {
             if ($unit === null || !$unit->canFight(false)) {
                 $replacement = $this->getReserveUnit($unit, $line->isFront());
-                if ($unit->isAlive()) {
+                if ($unit !== null && $unit->isAlive()) {
                     $this->reserves->add($unit);
-                } else {
+                } elseif ($unit !== null) {
                     $this->graveyard->add($unit);
                 }
                 if ($replacement !== null) {
-                    $canFight = true;
+                    $fieldedUnits->add($replacement);
                     $line->add($position, $replacement);
                 }
             }
         }
-        return $canFight;
+        return $fieldedUnits;
     }
 
     private function getReserveUnit(?Unit $unit, bool $front): ?Unit
@@ -208,6 +204,27 @@ class Side
     private function canReplace(Unit $replacement, bool $front): bool
     {
         return $replacement->canFight(true) && $replacement->prefersFront() === $front;
+    }
+
+    public function canFight(): bool
+    {
+        $canFight = $this->canLineFight($this->front);
+        if (!$canFight) {
+            $canFight = $this->canLineFight($this->back);
+        }
+        return $canFight;
+    }
+
+    private function canLineFight(Line $line): bool
+    {
+        $canFight = false;
+        /** @var ?Unit $unit */
+        foreach ($line as $unit) {
+            if ($unit !== null && $unit->canFight(false)) {
+                $canFight = true;
+            }
+        }
+        return $canFight;
     }
 
     private function isNotPlanned(Unit $unit): bool

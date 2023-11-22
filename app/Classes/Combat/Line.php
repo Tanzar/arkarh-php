@@ -33,7 +33,10 @@ class Line implements \Iterator
 
     public function add(int $position, Unit $unit): void
     {
-        $this->units[$position] = $unit;
+        if ($position >= 0 && $position < $this->width) {
+            $this->units[$position] = $unit;
+            $unit->setPosition($position);
+        }
     }
 
     public function get(int $position): ?Unit
