@@ -5,10 +5,10 @@ use App\Classes\Units\Abstracts\Unit;
 
 abstract class AbilityBuilder
 {
-    private ?int $charges;
+    private ?int $charges = null;
     
-    private ?int $cooldown;
-    private ?int $defaultCooldown;
+    private ?int $cooldown = null;
+    private ?int $defaultCooldown = null;
 
     public function build(Unit $unit): Ability
     {

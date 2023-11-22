@@ -16,7 +16,7 @@ class TargetByThreat extends TargetSelectionStartegy
 
     private int $mainTargetThreat = 0;
 
-    private ?Side $side;
+    private ?Side $side = null;
 
     public function __construct(int $area = 0, bool $bothLines = false)
     {
@@ -29,6 +29,7 @@ class TargetByThreat extends TargetSelectionStartegy
     protected function preSelect(): void
     {
         $this->mainTargetPosition = 0;
+        $this->mainTargetThreat = 0;
     }
 
     protected function checkPosition(Side $side, int $position, UnitsContainer $targets): void

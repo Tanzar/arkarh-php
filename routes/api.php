@@ -2,6 +2,7 @@
 
 use App\Classes\Modifiers\Category;
 use App\Classes\Modifiers\Modifiers;
+use App\Services\CombatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/test', function (Request $request) {
-    $mods = new Modifiers();
-    return Category::cases();
+    
+    $state =  CombatService::testBattle();
+
+    return ['state' => $state];
 })->name('test');

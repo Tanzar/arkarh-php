@@ -21,8 +21,8 @@ class Line implements \Iterator
     public function __construct(int $width, bool $isFront)
     {
         $this->units = [];
-        $this->startPosition = ceil($width / 2);
-        $this->position = ceil($width / 2);
+        $this->startPosition = floor($width / 2);
+        $this->position = floor($width / 2);
         $this->index = 0;
         $this->width = $width;
         $this->isFront = $isFront;
@@ -62,7 +62,8 @@ class Line implements \Iterator
     public function next(): void
     {
         $this->index++;
-        $this->position = $this->startPosition + ceil($this->index / 2) * (($this->index % 2) ? -1 : 1 );
+        $pos = $this->startPosition + ceil($this->index / 2) * (($this->index % 2) ? -1 : 1 );
+        $this->position = $pos;
     }
 
     public function key(): int

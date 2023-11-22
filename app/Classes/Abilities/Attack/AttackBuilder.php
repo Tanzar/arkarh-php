@@ -5,6 +5,7 @@ namespace App\Classes\Abilities\Attack;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
 use App\Classes\Abilities\Targeting\Abstracts\TargetSelectionStartegy;
+use App\Classes\Abilities\Targeting\TargetByThreat;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 
@@ -18,13 +19,13 @@ class AttackBuilder extends AbilityBuilder
 
     private bool $bothLines = false;
 
-    private School $school;
+    private School $school = School::Physical;
 
     private TargetSelectionStartegy $targetSelection;
 
     public function __construct()
     {
-
+        $this->targetSelection = new TargetByThreat();
     }
 
     public function range(int $range): AttackBuilder

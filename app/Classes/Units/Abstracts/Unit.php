@@ -439,8 +439,8 @@ class Unit
         } else {
             $ignoreArmor = 0;
         }
-        $armor = ((100 - $ignoreArmor) / 100) * $armor;
-        return ($armor / 100) * $damage;
+        $armor = 0;//((100 - $ignoreArmor) / 100) * $armor;
+        return $damage;
     }
 
     private function reduceDamageByWard(int $damage, ?Unit $source = null): float
@@ -452,7 +452,7 @@ class Unit
             $ignoreWard = 0;
         }
         $ward = ((100 - $ignoreWard) /100) * $ward;
-        return ($ward /100) * $damage;
+        return $damage;
     }
 
     private function limitDamage(int $damage): int

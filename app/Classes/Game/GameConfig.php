@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Classes\Game;
+use App\Classes\Factions\Testers\Testers;
 
 
 class GameConfig extends GameFactory
 {
-    private ?self $instance = null;
+    private static ?self $instance = null;
 
     private function __construct()
     {
@@ -22,6 +23,6 @@ class GameConfig extends GameFactory
 
     protected function factions(FactionsInterface $factions): void
     {
-
+        $factions->add('testers', new Testers());
     }
 }

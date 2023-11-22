@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 class Battlefield
 {
-    private ?self $instance = null;
+    private static ?self $instance = null;
 
     private Side $attackers;
 
@@ -17,6 +17,8 @@ class Battlefield
     private int $tickLimit = 10000;
 
     private int $tick = 1;
+
+    private int $moraleDamage = 5;
 
     private function __construct(Side $attackers, Side $defenders)
     {
@@ -65,7 +67,7 @@ class Battlefield
         return $this->tick;
     }
 
-    public function startBattle(): void //[PH] temporarly returns void later will return combat log
+    public function startBattle(): BattleState //[PH] temporarly returns void later will return combat log
     {
         $this->tick = 1;
         $state = BattleState::Ongoing;
@@ -74,6 +76,7 @@ class Battlefield
             $state = $this->tick();
             $this->tick++;
         }
+        return $state;
     }
 
     private function firstTick(): void
@@ -91,6 +94,7 @@ class Battlefield
         /** @var Unit $unit */
         foreach ($fieldedUnits as $unit) {
             $unit->act(Trigger::Action);
+            $unit->damageMorale($this->moraleDamage);
         }
         $this->refreshSides();
         return $this->determineState();
