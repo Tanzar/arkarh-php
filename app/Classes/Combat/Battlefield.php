@@ -67,16 +67,18 @@ class Battlefield
         return $this->tick;
     }
 
-    public function startBattle(): BattleState //[PH] temporarly returns void later will return combat log
+    public function startBattle(): CombatLog //[PH] temporarly returns void later will return combat log
     {
         $this->tick = 1;
         $state = BattleState::Ongoing;
         $this->firstTick();
         while ($state === BattleState::Ongoing && $this->tick <= $this->tickLimit) {
+            CombatLog::getInstance()->saveState($this);
             $state = $this->tick();
+            CombatLog::getInstance()->nextTick();
             $this->tick++;
         }
-        return $state;
+        return CombatLog::getInstance();
     }
 
     private function firstTick(): void

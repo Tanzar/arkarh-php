@@ -6,6 +6,7 @@ use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Abilities\Targeting\Abstracts\TargetSelectionStartegy;
 use App\Classes\Abilities\Targeting\TargetByThreat;
 use App\Classes\Combat\Battlefield;
+use App\Classes\Combat\CombatLog;
 use App\Classes\Modifiers\Category;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
@@ -98,6 +99,7 @@ class Attack extends Ability
             $damage = max(1, $this->damage * $multiplier);
             $damageTaken = $target->takeDamage($damage, $this->school, $source);
             if ($damageTaken > 0) {
+                $this->logAttack($target, $this->school, $damageTaken);
                 $successfullHits++;
             }
         }
@@ -114,10 +116,22 @@ class Attack extends Ability
             $damage = max(1, $this->damage * $multiplier);
             $damageTaken = $target->takeDamage($damage, $this->school, $source);
             if ($damageTaken > 0) {
+                $this->logAttack($target, $this->school, $damageTaken);
                 $successfullHits++;
             }
         }
         return $successfullHits > 0;
     }
 
+    public function logAttack(Unit $target, School $school, int $damage): void
+    {
+        $options = [
+            'side' => $this->getSource()->isAttacker() ? 'attacker' : 'defender',
+            'targetPosition' => $target->getPosition(),
+            'targetName' => $target->getName(),
+            'damage' => $damage,
+            'school' => _($school->value)
+        ];
+        CombatLog::getInstance()->saveAction('attack', $this->getSource(), $options);
+    }
 }

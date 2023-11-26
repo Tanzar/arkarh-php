@@ -13,7 +13,7 @@ use Illuminate\Support\Collection;
 class CombatService
 {
 
-    public static function testBattle(): BattleState
+    public static function testBattle(): array
     {
         $string = '{
             "front": {
@@ -37,7 +37,8 @@ class CombatService
         $jsons = new Collection();
         $jsons->add($string);
         $defenders = GameConfig::getInstance()->formSide($jsons, false);
-        return Battlefield::getInstance($attackers, $defenders)->startBattle();
+        $log = Battlefield::getInstance($attackers, $defenders)->startBattle();
+        return $log->toArray();
     }
 
 }
