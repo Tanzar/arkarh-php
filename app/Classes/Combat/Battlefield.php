@@ -73,9 +73,9 @@ class Battlefield
         $state = BattleState::Ongoing;
         $this->firstTick();
         while ($state === BattleState::Ongoing && $this->tick <= $this->tickLimit) {
-            CombatLog::getInstance()->saveState($this);
+            CombatLog::getInstance()->nextStage();
+            CombatLog::getInstance()->addTick($this->tick);
             $state = $this->tick();
-            CombatLog::getInstance()->nextTick();
             $this->tick++;
         }
         return CombatLog::getInstance();
@@ -83,6 +83,7 @@ class Battlefield
 
     private function firstTick(): void
     {
+        $this->saveState();
         $fieldedUnits = $this->getUnitsBySpeed();
         /** @var Unit $unit */
         foreach ($fieldedUnits as $unit) {
@@ -90,8 +91,10 @@ class Battlefield
         }
     }
 
+    
     private function tick(): BattleState
     {
+        $this->saveState();
         $fieldedUnits = $this->getUnitsBySpeed();
         /** @var Unit $unit */
         foreach ($fieldedUnits as $unit) {
@@ -101,6 +104,31 @@ class Battlefield
         $this->refreshSides();
         return $this->determineState();
     }
+
+    private function saveState(): void
+    {
+        $fieldedUnits = $this->getUnitsBySpeed();
+        /** @var Unit $unit */
+        foreach ($fieldedUnits as $unit) {
+            $name = $unit->getName();
+            CombatLog::getInstance()->addState($unit, "$name entered battle.");
+        }
+
+        $reserves = $this->attackers->getReserves()->merge($this->defenders->getReserves());
+        /** @var Unit $unit */
+        foreach ($reserves as $unit) {
+            $name = $unit->getName();
+            CombatLog::getInstance()->addState($unit, "$name awaits in reserves.", true);
+        }
+
+        $graves = $this->attackers->getGraveyard()->merge($this->defenders->getGraveyard());
+        /** @var Unit $unit */
+        foreach ($graves as $unit) {
+            $name = $unit->getName();
+            CombatLog::getInstance()->addState($unit, "$name lies in grave.", false, true);
+        }
+    }
+
 
     private function getUnitsBySpeed(): Collection
     {

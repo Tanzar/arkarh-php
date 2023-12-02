@@ -3,6 +3,7 @@
 namespace App\Classes\Abilities\Shared;
 
 use App\Classes\Combat\Battlefield;
+use App\Classes\Combat\CombatLog;
 use App\Classes\Units\Abstracts\Unit;
 
 abstract class Ability
@@ -73,6 +74,9 @@ abstract class Ability
     public function act(): void
     {
         if ($this->isAvailable()) {
+            CombatLog::getInstance()->nextStage();
+            $text = $this->actionLog();
+            CombatLog::getInstance()->addAbility($this->source, $text);
             $battlefield = Battlefield::getInstance();
             $succeeded = $this->action($battlefield);
             if ($succeeded) {
@@ -86,6 +90,8 @@ abstract class Ability
     {
         return ($this->charges !== 0) && $this->cooldown === 0;
     }
+
+    protected abstract function actionLog(): string;
 
     protected abstract function action(Battlefield $battlefield): bool;
 

@@ -18,6 +18,10 @@ Route::get('/', function () {
     return Inertia::render('Main/Index');
 });
 
+Route::get('/combat/sim', function () {
+    return Inertia::render('Combat/Simulation');
+});
+
 Route::get('/version', function () {
     return phpinfo();
 });

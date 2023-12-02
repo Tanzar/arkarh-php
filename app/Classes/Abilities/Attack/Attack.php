@@ -37,6 +37,11 @@ class Attack extends Ability
         $this->targetSelection = new TargetByThreat($this->area, $this->bothLines);
     }
 
+    protected function actionLog(): string
+    {
+        return $this->getSource()->getName() . ' starts attack.';
+    }
+
     public function setRange(int $range): void
     {
         $this->range = $range;
@@ -99,7 +104,7 @@ class Attack extends Ability
             $damage = max(1, $this->damage * $multiplier);
             $damageTaken = $target->takeDamage($damage, $this->school, $source);
             if ($damageTaken > 0) {
-                $this->logAttack($target, $this->school, $damageTaken);
+                CombatLog::getInstance()->addState($target, $target->getName() . ' takes ' . $damageTaken . ' ' . $this->school->value . ' damage');
                 $successfullHits++;
             }
         }
@@ -116,22 +121,9 @@ class Attack extends Ability
             $damage = max(1, $this->damage * $multiplier);
             $damageTaken = $target->takeDamage($damage, $this->school, $source);
             if ($damageTaken > 0) {
-                $this->logAttack($target, $this->school, $damageTaken);
                 $successfullHits++;
             }
         }
         return $successfullHits > 0;
-    }
-
-    public function logAttack(Unit $target, School $school, int $damage): void
-    {
-        $options = [
-            'side' => $this->getSource()->isAttacker() ? 'attacker' : 'defender',
-            'targetPosition' => $target->getPosition(),
-            'targetName' => $target->getName(),
-            'damage' => $damage,
-            'school' => _($school->value)
-        ];
-        CombatLog::getInstance()->saveAction('attack', $this->getSource(), $options);
     }
 }

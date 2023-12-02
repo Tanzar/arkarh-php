@@ -5,6 +5,7 @@ namespace App\Classes\Units\Abstracts;
 use App\Classes\Abilities\Shared\Abilities;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
+use App\Classes\Combat\CombatLog;
 use App\Classes\Modifiers\Category;
 use App\Classes\Modifiers\Modifier;
 use App\Classes\Modifiers\Modifiers;
@@ -559,32 +560,42 @@ class Unit
     public function act(Trigger $trigger = Trigger::Action): void
     {
         if ($this->isAlive()) {
-            $this->triggerDamageOverTime();
-            $this->triggerHealOverTime();
+            $addedStage = $this->triggerDamageOverTime();
+            $this->triggerHealOverTime($addedStage);
             if ($this->isAlive()) {
                 $this->abilities->act($trigger);
             }
         }
     }
 
-    private function triggerDamageOverTime(): void
+    private function triggerDamageOverTime(): bool
     {
+        $addedStage = false;
         $dots = $this->modifiers->getModifiers(Category::DamageOverTime);
         /** @var Modifier $modifier */
         foreach ($dots as $modifier) {
             $value = $modifier->getTotalValue();
             $damageTaken = $this->takeDamage($value, $modifier->getSchool());
-
+            if (!$addedStage) {
+                $addedStage = true;
+                CombatLog::getInstance()->nextStage();
+            }
+            CombatLog::getInstance()->addState($this, $this->name . ' takes ' . $damageTaken . ' ' . $modifier->getSchool() . ' damage.');
         }
+        return $addedStage;
     }
 
-    private function triggerHealOverTime(): void
+    private function triggerHealOverTime(bool $addedStage): void
     {
         $hots = $this->modifiers->getModifiers(Category::HealOverTime);
         foreach ($hots as $modifier) {
             $value = $modifier->getTotalValue();
             $healingTaken = $this->heal($value);
-
+            if (!$addedStage) {
+                $addedStage = true;
+                CombatLog::getInstance()->nextStage();
+            }
+            CombatLog::getInstance()->addState($this, $this->name . ' heals for ' . $healingTaken . '.');
         }
     }
 
