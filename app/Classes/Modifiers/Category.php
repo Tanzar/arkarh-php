@@ -29,4 +29,5 @@ enum Category: string
     case Range = 'range';
     case MoraleDamage = 'moraleDamage';
     case DamageImmunity = 'damageImmunity';
+    case Hardened = 'hardened';
 }

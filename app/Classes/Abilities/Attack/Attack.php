@@ -24,6 +24,8 @@ class Attack extends Ability
 
     private School $school;
 
+    private bool $piercing = false;
+
     private float $physicalMultiplier = 0.05;
 
     private float $magicMultiplier = 0.1;
@@ -72,6 +74,16 @@ class Attack extends Ability
         $this->school = $school;
     }
 
+    public function setPiercing(): void
+    {
+        $this->piercing = true;
+    }
+
+    public function unsetPiercing(): void
+    {
+        $this->piercing = false;
+    }
+
     public function setTargetSelection(TargetByThreat $targetSelection): void
     {
         $this->targetSelection = $targetSelection;
@@ -100,9 +112,9 @@ class Attack extends Ability
         /** @var Unit $target */
         foreach ($targets as $target) {
             $defense = $target->getDefense();
-            $multiplier = ($attack - $defense) * $this->physicalMultiplier;
+            $multiplier = 1 + ($attack - $defense) * $this->physicalMultiplier;
             $damage = max(1, $this->damage * $multiplier);
-            $damageTaken = $target->takeDamage($damage, $this->school, $source);
+            $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
             if ($damageTaken > 0) {
                 CombatLog::getInstance()->addState($target, $target->getName() . ' takes ' . $damageTaken . ' ' . $this->school->value . ' damage');
                 $successfullHits++;
@@ -115,11 +127,11 @@ class Attack extends Ability
     {
         $successfullHits = 0;
         $spellPower = $source->getSpellPower();
-        $multiplier = $spellPower * $this->magicMultiplier;
+        $multiplier = 1 + $spellPower * $this->magicMultiplier;
         /** @var Unit $target */
         foreach ($targets as $target) {
             $damage = max(1, $this->damage * $multiplier);
-            $damageTaken = $target->takeDamage($damage, $this->school, $source);
+            $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
             if ($damageTaken > 0) {
                 $successfullHits++;
             }

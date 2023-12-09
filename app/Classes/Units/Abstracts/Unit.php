@@ -399,7 +399,7 @@ class Unit
      * @param integer $damage amount to take
      * @return integer health lost, not include overkill
      */
-    public function takeDamage(int $damage, School $school, ?Unit $source = null): int
+    public function takeDamage(int $damage, School $school, bool $piercing): int
     {
         if ($this->isAlive()) {
             if ($this->modifiers->haveDamageImmunity($school)) {
@@ -407,9 +407,9 @@ class Unit
             }
             $damage = $this->calculateDamageMultiplier($damage, $school);
             if ($school === School::Physical) {
-                $damage = $this->reduceDamageByArmor($damage, $source);
+                $damage = $this->reduceDamageByArmor($damage, $piercing);
             } else {
-                $damage = $this->reduceDamageByWard($damage, $source);
+                $damage = $this->reduceDamageByWard($damage, $piercing);
 
             }
             $damage = $this->limitDamage($damage);
@@ -432,28 +432,26 @@ class Unit
         return max(0, $multiplier * $damage);
     }
 
-    private function reduceDamageByArmor(int $damage, ?Unit $source = null): float
+    private function reduceDamageByArmor(int $damage, bool $piercing): float
     {
-        $armor = $this->getArmor();
-        if ($source !== null) {
-            $ignoreArmor = $source->getIgnoreArmor();
+        if ($piercing && !$this->modifiers->isHardened()) {
+            return $damage;
         } else {
-            $ignoreArmor = 0;
+            $armor = $this->getArmor();
+            $multiplier = 1 - ($armor / 100);
+            return $damage * $multiplier;
         }
-        $armor = 0;//((100 - $ignoreArmor) / 100) * $armor;
-        return $damage;
     }
 
-    private function reduceDamageByWard(int $damage, ?Unit $source = null): float
+    private function reduceDamageByWard(int $damage, bool $piercing): float
     {
-        $ward = $this->getWard();
-        if ($source !== null) {
-            $ignoreWard = $source->getIgnoreWard();
+        if ($piercing && !$this->modifiers->isHardened()) {
+            return $damage;
         } else {
-            $ignoreWard = 0;
+            $ward = $this->getWard();
+            $multiplier = 1 - ($ward / 100);
+            return $damage * $multiplier;
         }
-        $ward = ((100 - $ignoreWard) /100) * $ward;
-        return $damage;
     }
 
     private function limitDamage(int $damage): int
@@ -575,7 +573,7 @@ class Unit
         /** @var Modifier $modifier */
         foreach ($dots as $modifier) {
             $value = $modifier->getTotalValue();
-            $damageTaken = $this->takeDamage($value, $modifier->getSchool());
+            $damageTaken = $this->takeDamage($value, $modifier->getSchool(), true);
             if (!$addedStage) {
                 $addedStage = true;
                 CombatLog::getInstance()->nextStage();

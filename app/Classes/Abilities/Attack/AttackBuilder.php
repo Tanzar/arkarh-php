@@ -21,6 +21,8 @@ class AttackBuilder extends AbilityBuilder
 
     private School $school = School::Physical;
 
+    private bool $piercing = false;
+
     private TargetSelectionStartegy $targetSelection;
 
     public function __construct()
@@ -64,6 +66,18 @@ class AttackBuilder extends AbilityBuilder
         return $this;
     }
 
+    public function piercing(): AttackBuilder
+    {
+        $this->piercing = true;
+        return $this;
+    }
+
+    public function notPiercing(): AttackBuilder
+    {
+        $this->piercing = false;
+        return $this;
+    }
+
     public function targeting(TargetSelectionStartegy $targeting): AttackBuilder
     {
         $this->targetSelection = $targeting;
@@ -75,6 +89,11 @@ class AttackBuilder extends AbilityBuilder
         $attack->setRange($this->range);
         $attack->setDamage($this->damage);
         $attack->setArea($this->area);
+        if ($this->piercing) {
+            $attack->setPiercing();
+        } else {
+            $attack->unsetPiercing();
+        }
         if ($this->bothLines) {
             $attack->strikeBothLines();
         } else {

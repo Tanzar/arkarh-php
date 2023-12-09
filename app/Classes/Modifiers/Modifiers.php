@@ -143,4 +143,10 @@ class Modifiers
         return false;
     }
 
+    public function isHardened(): bool
+    {
+        $modifiers = $this->getModifiers(Category::Hardened);
+        return $modifiers->count() > 0;
+    }
+
 }
