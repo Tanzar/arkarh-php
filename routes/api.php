@@ -23,3 +23,9 @@ Route::get('/test', function (Request $request) {
 
     return ['state' => $state];
 })->name('test');
+
+Route::get('/simulation/test', function (Request $request) {
+    return [
+        'states' => CombatService::testBattle()
+    ];
+})->name('combatSimTest');
