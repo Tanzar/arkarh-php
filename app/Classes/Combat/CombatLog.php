@@ -27,15 +27,19 @@ class CombatLog
         return self::$instance;
     }
 
-    public function nextStage(): void
+    public function nextStage(): int
     {
         $this->stage++;
         $this->logs[$this->stage] = [];
+        return $this->stage;
     }
 
-    public function addState(Unit $unit, string $text, bool $reserve = false, bool $graveyard = false): void
+    public function addState(Unit $unit, string $text, bool $reserve = false, bool $graveyard = false, int $stage = 0): void
     {
-        $this->logs[$this->stage][] = [
+        if ($stage <= 0) {
+            $stage = $this->stage;
+        }
+        $this->logs[$stage][] = [
             'type' => 'state',
             'position' => $unit->getPosition(),
             'line' => $unit->prefersFront() ? 'front' : 'back',
@@ -51,9 +55,12 @@ class CombatLog
         ];
     }
 
-    public function addAbility(Unit $unit, string $text): void
+    public function addAbility(Unit $unit, string $text, int $stage = 0): void
     {
-        $this->logs[$this->stage][] = [
+        if ($stage <= 0) {
+            $stage = $this->stage;
+        }
+        $this->logs[$stage][] = [
             'type' => 'ability',
             'position' => $unit->getPosition(),
             'line' => $unit->prefersFront() ? 'front' : 'back',
@@ -62,9 +69,12 @@ class CombatLog
         ];
     }
 
-    public function addTick(int $tick): void
+    public function addTick(int $tick, int $stage = 0): void
     {
-        $this->logs[$this->stage][] = [
+        if ($stage <= 0) {
+            $stage = $this->stage;
+        }
+        $this->logs[$stage][] = [
             'type' => 'tick',
             'tick' => $tick,
             'text' => "Start tick nr. $tick"

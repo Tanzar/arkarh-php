@@ -17,6 +17,8 @@ abstract class Ability
 
     private Unit $source;
 
+    private int $logStage = 0;
+
     public function __construct(Unit $source)
     {
         $this->source = $source;
@@ -74,7 +76,7 @@ abstract class Ability
     public function act(): void
     {
         if ($this->isAvailable()) {
-            CombatLog::getInstance()->nextStage();
+            $this->logStage = CombatLog::getInstance()->nextStage();
             $text = $this->actionLog();
             CombatLog::getInstance()->addAbility($this->source, $text);
             $battlefield = Battlefield::getInstance();
@@ -105,5 +107,10 @@ abstract class Ability
     public function incurCooldown(): void
     {
         $this->cooldown = $this->defaultCooldown;
+    }
+
+    protected function logUnitStage(Unit $unit, string $text, bool $reserve = false, bool $graveyard = false): void
+    {
+        CombatLog::getInstance()->addState($unit, $text, $reserve, $graveyard, $this->logStage);
     }
 }

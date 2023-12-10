@@ -6,7 +6,6 @@ use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Abilities\Targeting\Abstracts\TargetSelectionStartegy;
 use App\Classes\Abilities\Targeting\TargetByThreat;
 use App\Classes\Combat\Battlefield;
-use App\Classes\Combat\CombatLog;
 use App\Classes\Modifiers\Category;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
@@ -98,44 +97,66 @@ class Attack extends Ability
         $side = $battlefield->getOppositeSide($source);
         $range = $source->getModifiedValue($this->range, Category::Range, 1);
         $targets = $this->targetSelection->selectTargets($side, $source->getPosition(), $range);
+        return $this->strikeTargets($targets);
+    }
+
+    private function strikeTargets(Collection $targets): bool
+    {
+        $successfullHits = 0;
+        $attack = $this->getSource()->getAttack();
+        $spellPower = $this->getSource()->getSpellPower();
+        $lifesteal = $this->getSource()->getModifiedValue(0, Category::Lifesteal, 0);
+        /** @var Unit $target */
+        foreach ($targets as $target) {
+            $damage = $this->calculateDamage($target, $attack, $spellPower);
+            $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
+            if ($damageTaken > 0) {
+                $this->logUnitStage($target, $this->combatText($target, $damageTaken));
+                $this->lifesteal($lifesteal, $damageTaken);
+                $successfullHits++;
+            }
+        }
+        return $successfullHits > 0;
+    }
+
+    private function calculateDamage(Unit $target, int $attack, int $spellPower): int
+    {
         if ($this->school === School::Physical) {
-            return $this->physicalAttack($targets, $source);
+            return $this->calculatePhysicalDamage($attack, $target);
         } else {
-            return $this->magicalAttack($targets, $source);
+            return $this->calculateSpellDamage($spellPower);
         }
     }
 
-    private function physicalAttack(Collection $targets, Unit $source): bool
+    private function calculatePhysicalDamage(int $attack, Unit $target): int
     {
-        $successfullHits = 0;
-        $attack = $source->getAttack();
-        /** @var Unit $target */
-        foreach ($targets as $target) {
-            $defense = $target->getDefense();
-            $multiplier = 1 + ($attack - $defense) * $this->physicalMultiplier;
-            $damage = max(1, $this->damage * $multiplier);
-            $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
-            if ($damageTaken > 0) {
-                CombatLog::getInstance()->addState($target, $target->getName() . ' takes ' . $damageTaken . ' ' . $this->school->value . ' damage');
-                $successfullHits++;
-            }
-        }
-        return $successfullHits > 0;
+        $defense = $target->getDefense();
+        $multiplier = 1 + ($attack - $defense) * $this->physicalMultiplier;
+        return max(1, $this->damage * $multiplier);
     }
 
-    private function magicalAttack(Collection $targets, Unit $source): bool
+    private function calculateSpellDamage(int $spellPower): int
     {
-        $successfullHits = 0;
-        $spellPower = $source->getSpellPower();
         $multiplier = 1 + $spellPower * $this->magicMultiplier;
-        /** @var Unit $target */
-        foreach ($targets as $target) {
-            $damage = max(1, $this->damage * $multiplier);
-            $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
-            if ($damageTaken > 0) {
-                $successfullHits++;
+        return max(1, $this->damage * $multiplier);
+    }
+
+    private function combatText(unit $target, int $damageTaken): string
+    {
+        return $target->getName() . ' takes ' . $damageTaken . ' ' . $this->school->value . ' damage,';
+    }
+
+    private function lifesteal(int $lifesteal, int $damageTaken): void
+    {
+        if ($lifesteal > 0) {
+            $multiplier = $lifesteal / 100;
+            $health = max(1, $damageTaken * $multiplier);
+            $source = $this->getSource();
+            $healed = $source->heal($health);
+            if ($healed > 0) {
+                $text = $source->getName() . 'heals for ' . $healed . '.';
+                $this->logUnitStage($source, $text);
             }
         }
-        return $successfullHits > 0;
     }
 }

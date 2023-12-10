@@ -38,16 +38,11 @@ abstract class Tag
         return $this->uniqueGroup;
     }
 
-    protected function addModifier(ModifierBuilder $modifierBuilder): void
-    {
-        $this->modifiers[] = $modifierBuilder;
-    }
-
     public function getModifiers(): array
     {
         $modifiers = [];
         /** @var ModifierBuilder $builder */
-        foreach ($this->modifiers as $builder) {
+        foreach ($this->modifiers->getModifiers() as $builder) {
             $modifiers[] = $builder->build();
         }
         return $modifiers;

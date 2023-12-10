@@ -4,7 +4,7 @@ namespace App\Classes\Modifiers;
 
 class ModifierIdGenerator
 {
-    private int $value = 1;
+    private static int $value = 1;
 
     public static function get(): int
     {
