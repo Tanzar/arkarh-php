@@ -85,6 +85,12 @@ class UnitBuilder
         return $this;
     }
 
+    public function threat(int $value): UnitBuilder
+    {
+        $this->stats->put('threat', $value);
+        return $this;
+    }
+
     public function ability(AbilityBuilder $builder): UnitBuilder
     {
         $this->abilities->push($builder);
@@ -159,6 +165,9 @@ class UnitBuilder
         }
         if ($this->stats->has('morale')) {
             $unit->setMorale($this->stats->get('morale'));
+        }
+        if ($this->stats->has('threat')) {
+            $unit->setThreat($this->stats->get('threat'));
         }
     }
 

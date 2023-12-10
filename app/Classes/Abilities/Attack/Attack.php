@@ -58,16 +58,6 @@ class Attack extends Ability
         $this->area = $area;
     }
 
-    public function strikeBothLines(): void
-    {
-        $this->bothLines = true;
-    }
-
-    public function strikeSingleLine(): void
-    {
-        $this->bothLines = false;
-    }
-
     public function setSchool(School $school): void
     {
         $this->school = $school;
@@ -96,7 +86,7 @@ class Attack extends Ability
         $source = $this->getSource();
         $side = $battlefield->getOppositeSide($source);
         $range = $source->getModifiedValue($this->range, Category::Range, 1);
-        $targets = $this->targetSelection->selectTargets($side, $source->getPosition(), $range);
+        $targets = $this->targetSelection->selectTargets($side, $source->getPosition(), $range, $this->area);
         return $this->strikeTargets($targets);
     }
 

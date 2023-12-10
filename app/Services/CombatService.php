@@ -17,9 +17,19 @@ class CombatService
     {
         $string = '{
             "front": {
-                "10": "testers.unit.attackDummy"
+                "5": "testers.unit.fighter",
+                "6": "testers.unit.fighter",
+                "7": "testers.unit.fighter",
+                "8": "testers.unit.fighter",
+                "9": "testers.unit.fighter"
             },
-            "back": {},
+            "back": {
+                "5": "testers.unit.archer",
+                "6": "testers.unit.archer",
+                "7": "testers.unit.archer",
+                "8": "testers.unit.archer",
+                "9": "testers.unit.archer"
+            },
             "reserves": {}
         }';
         $jsons = new Collection();
@@ -27,11 +37,13 @@ class CombatService
         $attackers = GameConfig::getInstance()->formSide($jsons, true);
         $string = '{
             "front": {
-                "9": "testers.unit.attackDummy",
-                "10": "testers.unit.attackDummy",
-                "11": "testers.unit.attackDummy"
+                "6": "testers.unit.fighter",
+                "7": "testers.unit.tank",
+                "8": "testers.unit.fighter"
             },
-            "back": {},
+            "back": {
+                "7": "testers.unit.wizard"
+            },
             "reserves": {}
         }';
         $jsons = new Collection();

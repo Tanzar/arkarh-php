@@ -78,6 +78,9 @@ class Battlefield
             $state = $this->tick();
             $this->tick++;
         }
+        CombatLog::getInstance()->nextStage();
+        CombatLog::getInstance()->addTick($this->tick);
+        $this->saveState();
         return CombatLog::getInstance();
     }
 
@@ -111,7 +114,7 @@ class Battlefield
         /** @var Unit $unit */
         foreach ($fieldedUnits as $unit) {
             $name = $unit->getName();
-            CombatLog::getInstance()->addState($unit, "$name entered battle.");
+            CombatLog::getInstance()->addState($unit, "$name is ready for battle.");
         }
 
         $reserves = $this->attackers->getReserves()->merge($this->defenders->getReserves());

@@ -44,6 +44,13 @@ class Line implements \Iterator
         return $this->units[$position] ?? null;
     }
 
+    public function remove(int $position): void
+    {
+        if (isset($this->units[$position]) && $this->units[$position] !== null) {
+            $this->units[$position] = null;
+        }
+    }
+
     public function isFront(): bool
     {
         return $this->isFront;

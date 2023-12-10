@@ -28,14 +28,14 @@ function parseLogs() {
         attackers: {
             front: {},
             back: {},
-            graveyard: {},
-            reserves: {}
+            graveyard: [],
+            reserves: []
         },
         defenders: {
             front: {},
             back: {},
-            graveyard: {},
-            reserves: {}
+            graveyard: [],
+            reserves: []
         }
     }
     let newTexts = [];
@@ -58,9 +58,15 @@ function parseLogs() {
                     tickStage = i;
                     break;
                 case 'state':
-                    log.target = target;
-                    log.source = (target && log.side === source.side && log.line === source.line && log.position === source.position);
-                    newState[log.side][log.line][log.position] = log;
+                    if (!log.inGrave && !log.inReserve) {
+                        log.target = target;
+                        log.source = (target && log.side === source.side && log.line === source.line && log.position === source.position);
+                        newState[log.side][log.line][log.position] = log;
+                    } else if (log.inGrave) {
+                        newState[log.side].graveyard.push(log);
+                    } else if (log.inReserve) {
+                        newState[log.side].reserves.push(log);
+                    }
                     break;
                 case 'ability':
                     source = {side: log.side, line: log.line, position: log.position};

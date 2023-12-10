@@ -94,11 +94,7 @@ class AttackBuilder extends AbilityBuilder
         } else {
             $attack->unsetPiercing();
         }
-        if ($this->bothLines) {
-            $attack->strikeBothLines();
-        } else {
-            $attack->strikeSingleLine();
-        }
+        $this->targetSelection->checkBothLines($this->bothLines);
         $attack->setSchool($this->school);
         $attack->setTargetSelection($this->targetSelection);
         return $attack;

@@ -159,8 +159,12 @@ class Side
             if ($unit === null || !$unit->canFight(false)) {
                 $replacement = $this->getReserveUnit($unit, $line->isFront());
                 if ($unit !== null && $unit->isAlive()) {
+                    $unit->setPosition(-1);
+                    $line->remove($position);
                     $this->reserves->add($unit);
                 } elseif ($unit !== null) {
+                    $unit->setPosition(-1);
+                    $line->remove($position);
                     $this->graveyard->add($unit);
                 }
                 if ($replacement !== null) {
