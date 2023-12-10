@@ -46,6 +46,7 @@ function parseLogs() {
     console.log('Tick: ' + tickStage + '; Stage: ' + stage);
     for (let i = tickStage; i <= stage; i++) {
         let stageLogs = props.states[i];
+        let source = {side: '', line: '', position: ''};
         stageLogs.forEach((logLine) => {
             let log = JSON.parse(JSON.stringify(logLine));
             let target = (i !== tickStage && i === stage);
@@ -58,9 +59,11 @@ function parseLogs() {
                     break;
                 case 'state':
                     log.target = target;
+                    log.source = (target && log.side === source.side && log.line === source.line && log.position === source.position);
                     newState[log.side][log.line][log.position] = log;
                     break;
                 case 'ability':
+                    source = {side: log.side, line: log.line, position: log.position};
                     newState[log.side][log.line][log.position]['source'] = target;
                     break;
             }

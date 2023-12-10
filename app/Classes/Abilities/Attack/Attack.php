@@ -154,7 +154,7 @@ class Attack extends Ability
             $source = $this->getSource();
             $healed = $source->heal($health);
             if ($healed > 0) {
-                $text = $source->getName() . 'heals for ' . $healed . '.';
+                $text = $source->getName() . ' heals for ' . $healed . '.';
                 $this->logUnitStage($source, $text);
             }
         }

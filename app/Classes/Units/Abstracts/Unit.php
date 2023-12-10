@@ -496,7 +496,7 @@ class Unit
             1
         );
         $damage = $strength * $moraleDamage;
-        $this->morale -= $damage;
+        $this->morale += $damage;
     }
 
     public function increaseMorale(int $value): void

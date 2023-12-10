@@ -24,7 +24,7 @@ function unitClick(unit) {
 <template>
     <div 
         class="unit" 
-        :class="{ target: unit.target, source: unit.source }" 
+        :class="{ target: unit.target && !unit.source, source: unit.source }" 
         @click="unitClick(unit)"
     >
         <img 
