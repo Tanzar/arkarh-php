@@ -47,6 +47,7 @@ class Line implements \Iterator
     public function remove(int $position): void
     {
         if (isset($this->units[$position]) && $this->units[$position] !== null) {
+            $this->units[$position]->setPosition(-1);
             $this->units[$position] = null;
         }
     }

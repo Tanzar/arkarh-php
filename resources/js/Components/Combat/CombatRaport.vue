@@ -13,6 +13,23 @@ let stage = 1;
 
 let tickStage = 1;
 
+let tickStages = {
+    1: '1'
+};
+
+function formTickStages() {
+    tickStages = { 1: '1' };
+    Object.keys(props.states).forEach((key) => {
+        let state = props.states[key];
+        state.forEach((log) => {
+            if (log.type === 'tick') {
+                tickStages[key] = key;
+            }
+        });
+    });
+    console.log(tickStages)
+}
+
 let state = ref({});
 
 let texts = ref([]);
@@ -20,6 +37,7 @@ let texts = ref([]);
 watch(props, function(newValue) {
     stage = 1;
     tickStage = 1;
+    formTickStages();
     parseLogs();
 });
 
@@ -40,8 +58,14 @@ function parseLogs() {
     }
     let newTexts = [];
 
-    if (tickStage > stage) {
-        tickStage = 1;
+    if (tickStages[stage] !== undefined) {
+        tickStage = stage;
+    } else if (stage < tickStage) {
+        Object.keys(tickStages).forEach((key) => {
+            if (key < stage) {
+                tickStage = key;
+            }
+        });
     }
     console.log('Tick: ' + tickStage + '; Stage: ' + stage);
     for (let i = tickStage; i <= stage; i++) {
