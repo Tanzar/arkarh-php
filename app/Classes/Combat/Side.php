@@ -187,7 +187,7 @@ class Side
                 } elseif (
                     $unit !== null &&
                     (
-                        $replacement->getId() === $unit->getId() ||
+                        $replacement->getTypeId() === $unit->getTypeId() ||
                         $this->isNotPlanned($replacement)
                     )
                 ) {
@@ -231,6 +231,6 @@ class Side
 
     private function isNotPlanned(Unit $unit): bool
     {
-        return $this->plannedUnits->doesntContain($unit->getId());
+        return $this->plannedUnits->doesntContain($unit->getTypeId());
     }
 }

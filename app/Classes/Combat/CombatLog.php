@@ -46,6 +46,8 @@ class CombatLog
             'side' => $unit->isAttacker() ? 'attackers' : 'defenders',
             'inReserve' => $reserve,
             'inGrave' => $graveyard,
+            'typeId' => $unit->getTypeId(),
+            'id' => $unit->getId(),
             'health' => $unit->getHealth(),
             'morale' => ($unit->getMorale() / $unit->getMaxMorale()) * 100,
             'alive' => $unit->isAlive(),

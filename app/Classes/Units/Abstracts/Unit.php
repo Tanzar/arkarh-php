@@ -19,6 +19,8 @@ class Unit
 {
     private int $id;
 
+    private int $typeId;
+
     //Unit script name, must be uniqie at least for faction
     private string $scriptName;
 
@@ -72,7 +74,8 @@ class Unit
 
     public function __construct(int $id, string $scriptName, string $name, string $icon)
     {
-        $this->id = $id;
+        $this->typeId = $id;
+        $this->id = UnitIdGenerator::get();
         $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
@@ -85,6 +88,11 @@ class Unit
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getTypeId(): int
+    {
+        return $this->typeId;
     }
 
     /**
