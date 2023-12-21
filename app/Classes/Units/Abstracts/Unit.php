@@ -343,6 +343,14 @@ class Unit
         return $this->prefersFront;
     }
 
+    public function prefersBack(?bool $prefersBack = null): bool
+    {
+        if ($prefersBack !== null) {
+            $this->prefersFront = !$prefersBack;
+        }
+        return !$this->prefersFront;
+    }
+
     public function applyModifier(Modifier $modifier): void
     {
         $stacks = $this->modifiers->add($modifier);

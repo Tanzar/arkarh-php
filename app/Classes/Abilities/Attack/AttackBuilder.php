@@ -2,10 +2,10 @@
 
 namespace App\Classes\Abilities\Attack;
 
+use App\Classes\Abilities\Attack\Targeting\Primary\HighestThreat;
+use App\Classes\Abilities\Attack\Targeting\Primary\SelectStrategy;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
-use App\Classes\Abilities\Targeting\Abstracts\TargetSelectionStartegy;
-use App\Classes\Abilities\Targeting\TargetByThreat;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 
@@ -23,11 +23,11 @@ class AttackBuilder extends AbilityBuilder
 
     private bool $piercing = false;
 
-    private TargetSelectionStartegy $targetSelection;
+    private SelectStrategy $targetSelection;
 
     public function __construct()
     {
-        $this->targetSelection = new TargetByThreat();
+        $this->targetSelection = new HighestThreat();
     }
 
     public function range(int $range): AttackBuilder
@@ -78,9 +78,9 @@ class AttackBuilder extends AbilityBuilder
         return $this;
     }
 
-    public function targeting(TargetSelectionStartegy $targeting): AttackBuilder
+    public function targetHighestThreat(): AttackBuilder
     {
-        $this->targetSelection = $targeting;
+        $this->targetSelection = new HighestThreat();
         return $this;
     }
 
@@ -94,7 +94,11 @@ class AttackBuilder extends AbilityBuilder
         } else {
             $attack->unsetPiercing();
         }
-        $this->targetSelection->checkBothLines($this->bothLines);
+        if ($this->bothLines) {
+            $attack->setStrikeBothLines();
+        } else {
+            $attack->setStrikeSingleLine();
+        }
         $attack->setSchool($this->school);
         $attack->setTargetSelection($this->targetSelection);
         return $attack;

@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Classes\Abilities\Attack;
+
+use App\Classes\Abilities\Attack\Targeting\Primary\HighestThreat;
+use App\Classes\Abilities\Attack\Targeting\Primary\SelectStrategy;
+use App\Classes\Abilities\Attack\Targeting\TargetEnemies;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
-use App\Classes\Abilities\Targeting\Abstracts\TargetSelectionStartegy;
-use App\Classes\Abilities\Targeting\TargetByThreat;
 use App\Classes\Combat\Battlefield;
 use App\Classes\Modifiers\Category;
 use App\Classes\Shared\Types\School;
@@ -29,13 +31,13 @@ class Attack extends Ability
 
     private float $magicMultiplier = 0.1;
 
-    private TargetSelectionStartegy $targetSelection;
+    private TargetEnemies $targetSelection;
 
     public function __construct(Unit $unit)
     {
         parent::__construct($unit);
         $this->setTrigger(Trigger::Action);
-        $this->targetSelection = new TargetByThreat($this->area, $this->bothLines);
+        $this->targetSelection = new TargetEnemies(new HighestThreat());
     }
 
     protected function actionLog(): string
@@ -73,9 +75,19 @@ class Attack extends Ability
         $this->piercing = false;
     }
 
-    public function setTargetSelection(TargetByThreat $targetSelection): void
+    public function setStrikeBothLines(): void
     {
-        $this->targetSelection = $targetSelection;
+        $this->bothLines = true;
+    }
+
+    public function setStrikeSingleLine(): void
+    {
+        $this->bothLines = false;
+    }
+
+    public function setTargetSelection(SelectStrategy $primaryTargetSelection): void
+    {
+        $this->targetSelection = new TargetEnemies($primaryTargetSelection);
     }
 
     protected function action(Battlefield $battlefield): bool
@@ -84,9 +96,7 @@ class Attack extends Ability
             return false;
         }
         $source = $this->getSource();
-        $side = $battlefield->getOppositeSide($source);
-        $range = $source->getModifiedValue($this->range, Category::Range, 1);
-        $targets = $this->targetSelection->selectTargets($side, $source->getPosition(), $range, $this->area);
+        $targets = $this->targetSelection->select($battlefield, $source, $this->range, $this->area, $this->bothLines);
         return $this->strikeTargets($targets);
     }
 
