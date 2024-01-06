@@ -88,8 +88,7 @@ abstract class Ability
                 $this->useCharge();
                 $this->incurCooldown();
             }
-        }
-        if ($this->cooldown > 0) {
+        } elseif ($this->cooldown > 0) {
             $this->cooldown--;
         }
     }
