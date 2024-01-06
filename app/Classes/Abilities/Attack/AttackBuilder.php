@@ -12,6 +12,8 @@ use App\Classes\Units\Abstracts\Unit;
 
 class AttackBuilder extends AbilityBuilder
 {
+    private string $name = 'Attack';
+
     private int $range = 1;
 
     private int $damage = 1;
@@ -29,6 +31,12 @@ class AttackBuilder extends AbilityBuilder
     public function __construct()
     {
         $this->targetSelection = new HighestThreat();
+    }
+
+    public function name(string $name): AttackBuilder
+    {
+        $this->name = $name;
+        return $this;
     }
 
     public function range(int $range): AttackBuilder
@@ -92,7 +100,7 @@ class AttackBuilder extends AbilityBuilder
     }
 
     protected function createAbility(Unit $unit): Ability {
-        $attack = new Attack($unit);
+        $attack = new Attack($this->name, $unit);
         $attack->setRange($this->range);
         $attack->setDamage($this->damage);
         $attack->setArea($this->area);

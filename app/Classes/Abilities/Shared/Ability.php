@@ -8,6 +8,8 @@ use App\Classes\Units\Abstracts\Unit;
 
 abstract class Ability
 {
+    private string $name = '';
+
     private int $charges = -1;
 
     private int $cooldown = 0;
@@ -19,8 +21,9 @@ abstract class Ability
 
     private int $logStage = 0;
 
-    public function __construct(Unit $source)
+    public function __construct(string $name, Unit $source)
     {
+        $this->name = $name;
         $this->source = $source;
     }
 
@@ -93,7 +96,10 @@ abstract class Ability
         return ($this->charges !== 0) && $this->cooldown === 0;
     }
 
-    protected abstract function actionLog(): string;
+    protected function actionLog(): string
+    {
+        return $this->source->getName() . ' uses ' . $this->name;
+    }
 
     protected abstract function action(Battlefield $battlefield): bool;
 

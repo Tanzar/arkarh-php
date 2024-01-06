@@ -33,9 +33,9 @@ class Attack extends Ability
 
     private TargetEnemies $targetSelection;
 
-    public function __construct(Unit $unit)
+    public function __construct(String $name, Unit $unit)
     {
-        parent::__construct($unit);
+        parent::__construct($name, $unit);
         $this->setTrigger(Trigger::Action);
         $this->targetSelection = new TargetEnemies(new HighestThreat());
     }
