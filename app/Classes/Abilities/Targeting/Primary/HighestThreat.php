@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Abilities\Attack\Targeting\Primary;
+namespace App\Classes\Abilities\Targeting\Primary;
 
 use App\Classes\Units\Abstracts\Unit;
 

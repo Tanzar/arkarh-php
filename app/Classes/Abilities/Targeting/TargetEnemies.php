@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Classes\Abilities\Attack\Targeting;
+namespace App\Classes\Abilities\Targeting;
 
-use App\Classes\Abilities\Attack\Targeting\Primary\SelectStrategy;
+use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Combat\Battlefield;
 use App\Classes\Combat\PositionFormula;
 use App\Classes\Combat\Side;

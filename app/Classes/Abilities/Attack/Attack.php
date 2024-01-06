@@ -2,9 +2,9 @@
 
 namespace App\Classes\Abilities\Attack;
 
-use App\Classes\Abilities\Attack\Targeting\Primary\HighestThreat;
-use App\Classes\Abilities\Attack\Targeting\Primary\SelectStrategy;
-use App\Classes\Abilities\Attack\Targeting\TargetEnemies;
+use App\Classes\Abilities\Targeting\Primary\HighestThreat;
+use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
+use App\Classes\Abilities\Targeting\TargetEnemies;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Combat\Battlefield;
