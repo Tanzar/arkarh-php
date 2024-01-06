@@ -7,8 +7,10 @@ use App\Classes\Abilities\Targeting\Primary\LowestHealth;
 use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
+use App\Classes\Modifiers\ModifierBuilder;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
+use Illuminate\Support\Collection;
 
 class AttackBuilder implements AbilityBuilder
 {
@@ -34,8 +36,11 @@ class AttackBuilder implements AbilityBuilder
 
     private SelectStrategy $targetSelection;
 
+    private Collection $modifiers;
+
     public function __construct()
     {
+        $this->modifiers = new Collection();
         $this->targetSelection = new HighestThreat();
     }
 
@@ -111,6 +116,12 @@ class AttackBuilder implements AbilityBuilder
         return $this;
     }
 
+    public function applies(ModifierBuilder $builder): AttackBuilder
+    {
+        $this->modifiers->add($builder);
+        return $this;
+    }
+
     public function targetHighestThreat(): AttackBuilder
     {
         $this->targetSelection = new HighestThreat();
@@ -142,6 +153,9 @@ class AttackBuilder implements AbilityBuilder
         }
         $attack->setSchool($this->school);
         $attack->setTargetSelection($this->targetSelection);
+        foreach ($this->modifiers as $builder) {
+            $attack->addModifier($builder);
+        }
         return $attack;
      }
 

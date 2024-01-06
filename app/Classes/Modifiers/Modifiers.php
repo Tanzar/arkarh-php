@@ -121,7 +121,7 @@ class Modifiers
         $modifiers = $this->getModifiers($category);
         /** @var Modifier $modifier */
         foreach ($modifiers as $modifier) {
-            if ($school === School::Uncategorized || $modifier->getSchool() !== $school) {
+            if ($school === School::Uncategorized || $modifier->getSchool() === $school) {
                 $sum += $modifier->getTotalValue();
             }
         }

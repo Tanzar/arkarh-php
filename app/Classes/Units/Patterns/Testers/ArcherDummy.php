@@ -32,8 +32,6 @@ class ArcherDummy extends UnitPattern
             ->health(50);
 
         $builder->addAttack()->name('Range attack')->damage(20)->piercing()->range(10)->cooldown(1);
-
-
     }
 
 }

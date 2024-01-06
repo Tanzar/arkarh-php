@@ -444,7 +444,7 @@ class Unit
 
     private function calculateDamageMultiplier(int $damage, School $school): float
     {
-        $multiplier = 1 + $this->modifiers->getTotalValue(Category::DamageTakenMultiplier, $school);
+        $multiplier = 1 + (-1 * $this->modifiers->getTotalValue(Category::DamageTakenMultiplier, $school));
         return max(0, $multiplier * $damage);
     }
 

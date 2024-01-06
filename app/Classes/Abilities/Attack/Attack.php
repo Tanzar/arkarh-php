@@ -9,6 +9,7 @@ use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Combat\Battlefield;
 use App\Classes\Modifiers\Category;
+use App\Classes\Modifiers\ModifierBuilder;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 use Illuminate\Support\Collection;
@@ -33,10 +34,13 @@ class Attack extends Ability
 
     private TargetEnemies $targetSelection;
 
+    private Collection $modifiers;
+
     public function __construct(String $name, Unit $unit)
     {
         parent::__construct($name, $unit);
         $this->setTrigger(Trigger::Action);
+        $this->modifiers = new Collection();
         $this->targetSelection = new TargetEnemies(new HighestThreat());
     }
 
@@ -85,6 +89,12 @@ class Attack extends Ability
         $this->targetSelection = new TargetEnemies($primaryTargetSelection);
     }
 
+    public function addModifier(ModifierBuilder $builder): void
+    {
+        $builder->negative();
+        $this->modifiers->add($builder);
+    }
+
     protected function action(Battlefield $battlefield): bool
     {
         if ($this->school === School::Uncategorized) {
@@ -106,6 +116,10 @@ class Attack extends Ability
             $damage = $this->calculateDamage($target, $attack, $spellPower);
             $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
             if ($damageTaken > 0) {
+                foreach ($this->modifiers as $builder) {
+                    $modifier = $builder->build();
+                    $target->applyModifier($modifier);
+                }
                 $this->logUnitStage($target, $this->combatText($target, $damageTaken));
                 $this->lifesteal($lifesteal, $damageTaken);
                 $successfullHits++;

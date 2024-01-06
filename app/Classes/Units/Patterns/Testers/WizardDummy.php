@@ -3,6 +3,8 @@
 namespace App\Classes\Units\Patterns\Testers;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
+use App\Classes\Modifiers\Category;
+use App\Classes\Modifiers\ModifierBuilder;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\UnitBuilder;
 use App\Classes\Units\Abstracts\UnitPattern;
@@ -31,6 +33,10 @@ class WizardDummy extends UnitPattern
             ->speed(4)
             ->health(50);
 
+
+        $modifier = new ModifierBuilder('Arcane weakness', Category::DamageTakenMultiplier);
+        $modifier->school(School::Arcane)->value(0.5)->maxStacks(2);
+
         $builder->addAttack()
             ->name('Arcane Bombardment')
             ->initialCooldown(1)
@@ -39,7 +45,8 @@ class WizardDummy extends UnitPattern
             ->school(School::Arcane)
             ->area(2)
             ->range(5)
-            ->strikeBothLines();
+            ->strikeBothLines()
+            ->applies($modifier);
     }
 
 }
