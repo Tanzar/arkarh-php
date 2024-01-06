@@ -2,6 +2,7 @@
 
 namespace App\Classes\Units\Abstracts;
 
+use App\Classes\Abilities\Attack\AttackBuilder;
 use App\Classes\Abilities\Shared\AbilityBuilder;
 use App\Classes\Tag\Unit\Tag;
 use Illuminate\Support\Collection;
@@ -91,10 +92,11 @@ class UnitBuilder
         return $this;
     }
 
-    public function ability(AbilityBuilder $builder): UnitBuilder
+    public function addAttack(): AttackBuilder
     {
-        $this->abilities->push($builder);
-        return $this;
+        $builder = new AttackBuilder();
+        $this->abilities->pusz($builder);
+        return $builder;
     }
 
     public function tag(Tag $tag): UnitBuilder

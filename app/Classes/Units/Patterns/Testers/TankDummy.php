@@ -26,16 +26,13 @@ class TankDummy extends UnitPattern
 
     protected function pattern(UnitBuilder $builder): void {
 
-        $attack = new AttackBuilder();
-
-        $attack->damage(5);
-
         $builder
-            ->ability($attack)
             ->armor(50)
             ->threat(10)
             ->speed(1)
             ->health(300);
+
+        $builder->addAttack()->name('Dummy slap')->damage(5);
     }
 
 }

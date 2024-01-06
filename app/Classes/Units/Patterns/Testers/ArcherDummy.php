@@ -26,15 +26,14 @@ class ArcherDummy extends UnitPattern
 
     protected function pattern(UnitBuilder $builder): void {
 
-        $attack = new AttackBuilder();
-
-        $attack->damage(20)->piercing()->range(10);
-
         $builder
-            ->ability($attack)
             ->prefersBack()
             ->speed(6)
             ->health(50);
+
+        $builder->addAttack()->name('Range attack')->damage(20)->piercing()->range(10);
+
+
     }
 
 }

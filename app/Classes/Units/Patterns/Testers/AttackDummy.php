@@ -20,14 +20,11 @@ class AttackDummy extends UnitPattern
 
     protected function pattern(UnitBuilder $builder): void 
     {
-        $attack = new AttackBuilder();
-
-        $attack->damage(10);
-
         $builder
-            ->ability($attack)
             ->speed(5)
             ->health(100);
+
+        $builder->addAttack()->name('Melee strike')->damage(10);
     }
 
 }

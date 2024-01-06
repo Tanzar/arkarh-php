@@ -26,16 +26,19 @@ class WizardDummy extends UnitPattern
     }
 
     protected function pattern(UnitBuilder $builder): void {
-
-        $attack = new AttackBuilder();
-
-        $attack->damage(20)->piercing()->school(School::Arcane)->area(2)->range(5)->strikeBothLines();
-
         $builder
-            ->ability($attack)
             ->prefersBack()
             ->speed(4)
             ->health(50);
+
+        $builder->addAttack()
+            ->name('Arcane Bombardment')
+            ->damage(20)
+            ->piercing()
+            ->school(School::Arcane)
+            ->area(2)
+            ->range(5)
+            ->strikeBothLines();
     }
 
 }
