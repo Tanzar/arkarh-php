@@ -3,6 +3,7 @@
 namespace App\Classes\Abilities\Attack;
 
 use App\Classes\Abilities\Attack\Targeting\Primary\HighestThreat;
+use App\Classes\Abilities\Attack\Targeting\Primary\LowestHealth;
 use App\Classes\Abilities\Attack\Targeting\Primary\SelectStrategy;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
@@ -81,6 +82,12 @@ class AttackBuilder extends AbilityBuilder
     public function targetHighestThreat(): AttackBuilder
     {
         $this->targetSelection = new HighestThreat();
+        return $this;
+    }
+
+    public function targetLowestHealth(): AttackBuilder
+    {
+        $this->targetSelection = new LowestHealth();
         return $this;
     }
 
