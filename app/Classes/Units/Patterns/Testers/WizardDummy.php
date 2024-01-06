@@ -33,6 +33,7 @@ class WizardDummy extends UnitPattern
 
         $builder->addAttack()
             ->name('Arcane Bombardment')
+            ->initialCooldown(1)
             ->damage(20)
             ->piercing()
             ->school(School::Arcane)

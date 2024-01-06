@@ -40,11 +40,6 @@ class Attack extends Ability
         $this->targetSelection = new TargetEnemies(new HighestThreat());
     }
 
-    protected function actionLog(): string
-    {
-        return $this->getSource()->getName() . ' starts attack.';
-    }
-
     public function setRange(int $range): void
     {
         $this->range = $range;

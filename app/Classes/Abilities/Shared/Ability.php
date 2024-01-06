@@ -8,12 +8,15 @@ use App\Classes\Units\Abstracts\Unit;
 
 abstract class Ability
 {
-    private string $name = '';
+    public const DEFAULT_CHARGES = -1;
+    public const DEFAULT_COOLDOWN = 0;
 
-    private int $charges = -1;
+    private string $name = 'ability';
 
-    private int $cooldown = 0;
-    private int $defaultCooldown = 0;
+    private int $charges = self::DEFAULT_CHARGES;
+
+    private int $cooldown = self::DEFAULT_COOLDOWN;
+    private int $defaultCooldown = self::DEFAULT_COOLDOWN;
 
     private Trigger $trigger = Trigger::Action;
 
@@ -34,12 +37,9 @@ abstract class Ability
     {
         if ($charges > 0) {
             $this->charges = $charges;
+        } else {
+            $this->charges = -1;
         }
-    }
-
-    public function setUnlimitedCharges(): void
-    {
-        $this->charges = -1;
     }
 
     /**
@@ -88,6 +88,9 @@ abstract class Ability
                 $this->useCharge();
                 $this->incurCooldown();
             }
+        }
+        if ($this->cooldown > 0) {
+            $this->cooldown--;
         }
     }
 

@@ -95,7 +95,7 @@ class UnitBuilder
     public function addAttack(): AttackBuilder
     {
         $builder = new AttackBuilder();
-        $this->abilities->pusz($builder);
+        $this->abilities->push($builder);
         return $builder;
     }
 

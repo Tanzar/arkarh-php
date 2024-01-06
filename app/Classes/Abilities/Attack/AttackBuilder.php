@@ -10,9 +10,15 @@ use App\Classes\Abilities\Shared\AbilityBuilder;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 
-class AttackBuilder extends AbilityBuilder
+class AttackBuilder implements AbilityBuilder
 {
-    private string $name = 'Attack';
+    private string $name = 'attack';
+
+    private int $charges = Ability::DEFAULT_CHARGES;
+    
+    private int $cooldown = Ability::DEFAULT_COOLDOWN;
+
+    private int $initialCooldown = Ability::DEFAULT_COOLDOWN;
 
     private int $range = 1;
 
@@ -36,6 +42,24 @@ class AttackBuilder extends AbilityBuilder
     public function name(string $name): AttackBuilder
     {
         $this->name = $name;
+        return $this;
+    }
+
+    public function charges(int $charges): AttackBuilder
+    {
+        $this->charges = $charges;
+        return $this;
+    }
+
+    public function initialCooldown(int $cooldown): AttackBuilder
+    {
+        $this->initialCooldown = $cooldown;
+        return $this;
+    }
+
+    public function cooldown(int $cooldown): AttackBuilder
+    {
+        $this->cooldown = $cooldown;
         return $this;
     }
 
@@ -99,8 +123,10 @@ class AttackBuilder extends AbilityBuilder
         return $this;
     }
 
-    protected function createAbility(Unit $unit): Ability {
+    public function build(Unit $unit): Ability {
         $attack = new Attack($this->name, $unit);
+        $attack->setCharges($this->charges);
+        $attack->setCooldown($this->cooldown, $this->initialCooldown);
         $attack->setRange($this->range);
         $attack->setDamage($this->damage);
         $attack->setArea($this->area);
