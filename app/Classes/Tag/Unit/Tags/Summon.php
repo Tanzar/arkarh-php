@@ -2,7 +2,7 @@
 
 namespace App\Classes\Tag\Unit\Tags;
 
-use App\Classes\Modifiers\ModifierBuilderContainer;
+use App\Classes\Modifiers\Base\ModifierBuilderContainer;
 use App\Classes\Tag\Unit\Tag;
 
 class Summon extends Tag

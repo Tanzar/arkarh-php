@@ -4,7 +4,9 @@ namespace App\Classes\Units\Abstracts;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
 use App\Classes\Abilities\Shared\AbilityBuilder;
+use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Tag\Unit\Tag;
+use Closure;
 use Illuminate\Support\Collection;
 
 class UnitBuilder
@@ -29,7 +31,7 @@ class UnitBuilder
 
     public function __construct(string $scriptName, string $name, string $icon)
     {
-        $this->id = UnitIdGenerator::get();
+        $this->id = IdGenerator::get();
         $this->stats = collect();
         $this->scriptName = $scriptName;
         $this->name = $name;
@@ -92,11 +94,12 @@ class UnitBuilder
         return $this;
     }
 
-    public function addAttack(): AttackBuilder
+    public function addAttack(Closure $function): UnitBuilder
     {
         $builder = new AttackBuilder();
+        $function($builder);
         $this->abilities->push($builder);
-        return $builder;
+        return $this;
     }
 
     public function tag(Tag $tag): UnitBuilder

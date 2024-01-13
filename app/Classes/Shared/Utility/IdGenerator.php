@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Classes\Modifiers;
+namespace App\Classes\Shared\Utility;
 
-class ModifierIdGenerator
+class IdGenerator
 {
     private static int $value = 1;
 

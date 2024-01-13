@@ -2,8 +2,8 @@
 
 namespace App\Classes\Tag\Unit;
 
-use App\Classes\Modifiers\ModifierBuilder;
-use App\Classes\Modifiers\ModifierBuilderContainer;
+use App\Classes\Modifiers\Base\ModifierBuilder;
+use App\Classes\Modifiers\Base\ModifierBuilderContainer;
 
 abstract class Tag
 {

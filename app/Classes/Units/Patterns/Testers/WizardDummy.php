@@ -3,8 +3,8 @@
 namespace App\Classes\Units\Patterns\Testers;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
-use App\Classes\Modifiers\Category;
-use App\Classes\Modifiers\ModifierBuilder;
+use App\Classes\Modifiers\Base\Category;
+use App\Classes\Modifiers\Base\ModifierBuilder;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\UnitBuilder;
 use App\Classes\Units\Abstracts\UnitPattern;
@@ -31,22 +31,24 @@ class WizardDummy extends UnitPattern
         $builder
             ->prefersBack()
             ->speed(4)
-            ->health(50);
-
-
-        $modifier = new ModifierBuilder('Arcane weakness', Category::DamageTakenMultiplier);
-        $modifier->school(School::Arcane)->value(0.5)->maxStacks(2);
-
-        $builder->addAttack()
-            ->name('Arcane Bombardment')
-            ->initialCooldown(1)
-            ->damage(20)
-            ->piercing()
-            ->school(School::Arcane)
-            ->area(2)
-            ->range(5)
-            ->strikeBothLines()
-            ->applies($modifier);
+            ->health(50)
+            ->addAttack(function(AttackBuilder $attack) {
+            $attack->name('Arcane Bombardment')
+                ->initialCooldown(1)
+                ->damage(20)
+                ->piercing()
+                ->school(School::Arcane)
+                ->area(2)
+                ->range(5)
+                ->strikeBothLines()
+                ->applies(
+                    'Arcane Weakness', 
+                    Category::DamageTakenMultiplier, 
+                    function(ModifierBuilder $modifier) {
+                        $modifier->school(School::Arcane)->stackValue(0.5)->maxStacks(2);
+                    });
+        });
+            
     }
 
 }

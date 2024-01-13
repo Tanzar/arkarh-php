@@ -6,11 +6,12 @@ use App\Classes\Abilities\Shared\Abilities;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Combat\CombatLog;
-use App\Classes\Modifiers\Category;
-use App\Classes\Modifiers\Modifier;
-use App\Classes\Modifiers\Modifiers;
+use App\Classes\Modifiers\Base\Category;
+use App\Classes\Modifiers\Base\Modifier;
+use App\Classes\Modifiers\Base\Modifiers;
 use App\Classes\Shared\Types\Dispells;
 use App\Classes\Shared\Types\School;
+use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Tag\Unit\Tag;
 use App\Classes\Tag\Unit\Tags;
 use App\Classes\Units\Escape\Standard;
@@ -75,7 +76,7 @@ class Unit
     public function __construct(int $id, string $scriptName, string $name, string $icon)
     {
         $this->typeId = $id;
-        $this->id = UnitIdGenerator::get();
+        $this->id = IdGenerator::get();
         $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
@@ -399,16 +400,6 @@ class Unit
         return $this->modifiers->dispellNegatives($dispell);
     }
 
-    public function getIgnoreArmor(): int
-    {
-        return $this->getModifiedValue(0, Category::IgnoreArmor, 0, 100);
-    }
-
-    public function getIgnoreWard(): int
-    {
-        return $this->getModifiedValue(0, Category::IgnoreWard, 0, 100);
-    }
-
     /**
      * Makes unit take given amount of damage
      *
@@ -574,41 +565,20 @@ class Unit
     public function act(Trigger $trigger = Trigger::Action): void
     {
         if ($this->isAlive()) {
-            $addedStage = $this->triggerDamageOverTime();
-            $this->triggerHealOverTime($addedStage);
+            $this->triggerHealOverTime();
             if ($this->isAlive()) {
                 $this->abilities->act($trigger);
             }
         }
     }
 
-    private function triggerDamageOverTime(): bool
-    {
-        $addedStage = false;
-        $dots = $this->modifiers->getModifiers(Category::DamageOverTime);
-        /** @var Modifier $modifier */
-        foreach ($dots as $modifier) {
-            $value = $modifier->getTotalValue();
-            $damageTaken = $this->takeDamage($value, $modifier->getSchool(), true);
-            if (!$addedStage) {
-                $addedStage = true;
-                CombatLog::getInstance()->nextStage();
-            }
-            CombatLog::getInstance()->addState($this, $this->name . ' takes ' . $damageTaken . ' ' . $modifier->getSchool() . ' damage.');
-        }
-        return $addedStage;
-    }
-
-    private function triggerHealOverTime(bool $addedStage): void
+    private function triggerHealOverTime(): void
     {
         $hots = $this->modifiers->getModifiers(Category::HealOverTime);
         foreach ($hots as $modifier) {
             $value = $modifier->getTotalValue();
             $healingTaken = $this->heal($value);
-            if (!$addedStage) {
-                $addedStage = true;
-                CombatLog::getInstance()->nextStage();
-            }
+            CombatLog::getInstance()->nextStage();
             CombatLog::getInstance()->addState($this, $this->name . ' heals for ' . $healingTaken . '.');
         }
     }

@@ -2,8 +2,8 @@
 
 namespace App\Classes\Tag\Unit\Tags;
 
-use App\Classes\Modifiers\Category;
-use App\Classes\Modifiers\ModifierBuilderContainer;
+use App\Classes\Modifiers\Base\Category;
+use App\Classes\Modifiers\Base\ModifierBuilderContainer;
 use App\Classes\Tag\Unit\Tag;
 
 class Vampire extends Tag
@@ -21,7 +21,9 @@ class Vampire extends Tag
 
     protected function modifiers(ModifierBuilderContainer $modifiers): void
     {
-        $modifiers->add('vampirism', Category::Lifesteal)->value(20);
+        $modifiers
+            ->add('vampirism', Category::Lifesteal)
+            ->stackValue(20);
     }
 
 }

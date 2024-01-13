@@ -7,9 +7,13 @@ use App\Classes\Abilities\Targeting\Primary\LowestHealth;
 use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
+use App\Classes\Modifiers\Base\Category;
+use App\Classes\Modifiers\Base\Modifier;
 use App\Classes\Modifiers\ModifierBuilder;
 use App\Classes\Shared\Types\School;
+use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Units\Abstracts\Unit;
+use Closure;
 use Illuminate\Support\Collection;
 
 class AttackBuilder implements AbilityBuilder
@@ -116,9 +120,11 @@ class AttackBuilder implements AbilityBuilder
         return $this;
     }
 
-    public function applies(ModifierBuilder $builder): AttackBuilder
+    public function applies(string $name, Category $category, Closure $function): AttackBuilder
     {
-        $this->modifiers->add($builder);
+        $modifier = new Modifier($name, $category);
+        $function($modifier);
+        $this->modifiers->add($modifier);
         return $this;
     }
 

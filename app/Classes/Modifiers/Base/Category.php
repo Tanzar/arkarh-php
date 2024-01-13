@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Modifiers;
+namespace App\Classes\Modifiers\Base;
 
 enum Category: string
 {
@@ -14,11 +14,7 @@ enum Category: string
     case Morale = 'morale';
     case ArmorCap = 'armorCap';
     case WardCap = 'wardCap';
-    case IgnoreArmor = 'ignoreArmor';
-    case IgnoreWard = 'ignoreWard';
-    case IgnoreDefense = 'ignoreDefense';
     case MaxDamageTaken = 'maxDamageTaken';
-    case DamageOverTime = 'damageOverTime';
     case HealOverTime = 'healOverTime';
     case DamageMultiplier = 'damageMultiplier';
     case DamageTakenMultiplier = 'damageTakenMultiplier';

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Classes\Modifiers;
+namespace App\Classes\Modifiers\Base;
 
+use App\Classes\Shared\Utility\IdGenerator;
 use Illuminate\Support\Collection;
 
 class ModifierBuilderContainer
@@ -20,7 +21,7 @@ class ModifierBuilderContainer
 
     public function add(string $name, Category $category): ModifierBuilder
     {
-        $builder = new ModifierBuilder($name, $category);
+        $builder = new Modifier($name, $category);
         $this->modifiers->push($builder);
         return $builder;
     }

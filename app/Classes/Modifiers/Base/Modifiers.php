@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Modifiers;
+namespace App\Classes\Modifiers\Base;
 
 use App\Classes\Shared\Types\Dispells;
 use App\Classes\Shared\Types\School;
@@ -23,35 +23,14 @@ class Modifiers
     {
         $category = $modifier->getCategory();
         $mods = $this->getModifiers($category);
-        if ($modifier->getUniqueGroup() !== '') {
-            return $this->addUniqueGroup($mods, $modifier);
-        } else {
-            return $this->addStandardModifier($mods, $modifier);
-        }
-    }
-
-    private function addUniqueGroup(Collection $mods, Modifier $modifier): int
-    {
-        $uniqueGroup = $modifier->getUniqueGroup();
-        /** @var Modifier $modifier */
+        /** @var Modifier $mod */
         foreach ($mods as $mod) {
-            if ($uniqueGroup === $mod->getUniqueGroup()) {
-                return $mod->changeStacks($modifier->getStacks());
+            if ($mod->areSame($modifier) && $mod->canChangeOnApply()) {
+                return $mod->changeStacks();
             }
         }
-        $mods->put($modifier->getId(), $modifier);
+        $mods->push($modifier);
         return $modifier->getStacks();
-    }
-
-    private function addStandardModifier(Collection $mods, Modifier $modifier): int
-    {
-        if ($mods->has($modifier->getId())) {
-            $current = $mods->get($modifier->getId());
-            return $current->changeStacks($modifier->getStacks());
-        } else {
-            $mods->put($modifier->getId(), $modifier);
-            return $modifier->getStacks();
-        }
     }
 
     public function update(): void
@@ -84,8 +63,7 @@ class Modifiers
             /** @var Modifier $modifier */
             foreach ($mods as $key => $modifier) {
                 if (
-                    $modifier->getDispell() !== Dispells::None && 
-                    $modifier->getDispell() === $dispell && 
+                    $modifier->canDispell($dispell) && 
                     $modifier->isNegative()
                 ) {
                     $mods->forget($key);
@@ -103,8 +81,7 @@ class Modifiers
             /** @var Modifier $modifier */
             foreach ($mods as $key => $modifier) {
                 if (
-                    $modifier->getDispell() !== Dispells::None && 
-                    $modifier->getDispell() === $dispell && 
+                    $modifier->canDispell($dispell) && 
                     $modifier->isPositive()
                 ) {
                     $mods->forget($key);
