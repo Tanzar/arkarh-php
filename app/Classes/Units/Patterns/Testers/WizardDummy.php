@@ -12,11 +12,6 @@ use App\Classes\Units\Abstracts\UnitPattern;
 class WizardDummy extends UnitPattern
 {
 
-    protected function setScriptName(): string
-    {
-        return 'wizardDummy';
-    }
-
     protected function setName(): string
     {
         return 'Wizard Dummy';
@@ -41,12 +36,12 @@ class WizardDummy extends UnitPattern
                 ->area(2)
                 ->range(5)
                 ->strikeBothLines()
-                /*->applies(
+                ->applies(
                     'Arcane Weakness', 
                     Category::DamageTakenMultiplier, 
                     function(ModifierBuilder $modifier) {
                         $modifier->school(School::Arcane)->stackValue(0.5)->maxStacks(2);
-                    })*/;
+                    });
         });
             
     }

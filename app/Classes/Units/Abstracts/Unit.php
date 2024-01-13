@@ -22,9 +22,6 @@ class Unit
 
     private int $typeId;
 
-    //Unit script name, must be uniqie at least for faction
-    private string $scriptName;
-
     //Unit display name
     private string $name;
 
@@ -73,11 +70,10 @@ class Unit
 
     private int $position = -1;
 
-    public function __construct(int $id, string $scriptName, string $name, string $icon)
+    public function __construct(int $id, string $name, string $icon)
     {
         $this->typeId = $id;
         $this->id = IdGenerator::get();
-        $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
         $this->modifiers = new Modifiers();
@@ -276,14 +272,6 @@ class Unit
             $this->morale = $morale;
             $this->maxHealth = $morale;
         }
-    }
-
-    /**
-     * Get the value of scriptName
-     */ 
-    public function getScriptName()
-    {
-        return $this->scriptName;
     }
 
     /**

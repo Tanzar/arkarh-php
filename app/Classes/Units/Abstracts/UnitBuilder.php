@@ -13,8 +13,6 @@ class UnitBuilder
 {
     private int $id;
 
-    private string $scriptName;
-
     //Unit display name
     private string $name;
 
@@ -29,11 +27,10 @@ class UnitBuilder
 
     private Collection $tags;
 
-    public function __construct(string $scriptName, string $name, string $icon)
+    public function __construct(string $name, string $icon)
     {
         $this->id = IdGenerator::get();
         $this->stats = collect();
-        $this->scriptName = $scriptName;
         $this->name = $name;
         $this->icon = $icon;
         $this->abilities = collect();
@@ -124,7 +121,6 @@ class UnitBuilder
     {
         $unit = new Unit(
             $this->id,
-            $this->scriptName,
             $this->name,
             $this->icon
         );
