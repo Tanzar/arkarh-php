@@ -4,7 +4,7 @@ namespace App\Classes\Abilities\Attack;
 
 use App\Classes\Abilities\Targeting\Primary\HighestThreat;
 use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
-use App\Classes\Abilities\Targeting\TargetEnemies;
+use App\Classes\Abilities\Targeting\Enemies\Area;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Combat\Battlefield;
@@ -32,7 +32,7 @@ class Attack extends Ability
 
     private float $magicMultiplier = 0.1;
 
-    private TargetEnemies $targetSelection;
+    private Area $targetSelection;
 
     private Collection $modifiers;
 
@@ -41,7 +41,7 @@ class Attack extends Ability
         parent::__construct($name, $unit);
         $this->setTrigger(Trigger::Action);
         $this->modifiers = new Collection();
-        $this->targetSelection = new TargetEnemies(new HighestThreat());
+        $this->targetSelection = new Area(new HighestThreat());
     }
 
     public function setRange(int $range): void
@@ -86,7 +86,7 @@ class Attack extends Ability
 
     public function setTargetSelection(SelectStrategy $primaryTargetSelection): void
     {
-        $this->targetSelection = new TargetEnemies($primaryTargetSelection);
+        $this->targetSelection = new Area($primaryTargetSelection);
     }
 
     public function addModifier(Modifier $builder): void

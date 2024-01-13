@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Abilities\Targeting;
+namespace App\Classes\Abilities\Targeting\Enemies;
 
 use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Combat\Battlefield;
@@ -10,7 +10,7 @@ use App\Classes\Modifiers\Base\Category;
 use App\Classes\Units\Abstracts\Unit;
 use Illuminate\Support\Collection;
 
-class TargetEnemies
+class Area
 {
     private SelectStrategy $primaryTargetSelect;
 
