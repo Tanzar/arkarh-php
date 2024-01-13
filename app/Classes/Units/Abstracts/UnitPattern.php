@@ -10,11 +10,19 @@ abstract class UnitPattern
 
     private string $icon;
 
+    private UnitBuilder $builder;
+
     public function __construct()
     {
         $this->scriptName = $this->setScriptName();
         $this->name = $this->setName();
         $this->icon = $this->setIcon();
+        $this->builder = new UnitBuilder(
+            $this->scriptName, 
+            $this->name, 
+            $this->icon
+        );
+        $this->pattern($this->builder);
     }
 
     protected abstract function setScriptName(): string;
@@ -27,12 +35,6 @@ abstract class UnitPattern
 
     public function make(): Unit
     {
-        $builder = new UnitBuilder(
-            $this->scriptName, 
-            $this->name, 
-            $this->icon
-        );
-        $this->pattern($builder);
-        return $builder->build();
+        return $this->builder->build();
     }
 }

@@ -35,6 +35,10 @@ interface ModifierBuilder
 
     public function positive(): ModifierBuilder;
 
+    public function uniquePerUnit(): ModifierBuilder;
+
+    public function uniquePerUnitType(): ModifierBuilder;
+
     public function build(): Modifier;
 
 }

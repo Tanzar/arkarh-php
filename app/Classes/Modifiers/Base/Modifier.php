@@ -5,11 +5,13 @@ namespace App\Classes\Modifiers\Base;
 use App\Classes\Shared\Types\Dispells;
 use App\Classes\Shared\Types\School;
 use App\Classes\Shared\Utility\IdGenerator;
+use App\Classes\Units\Abstracts\Unit;
 
 class Modifier implements ModifierBuilder
 {
     private int $id;
     private string $name;
+    private ?Unit $source = null;
     private int $stacks = 1;
     private int $maxStacks = 1;
     private int $stacksChange = 1;
@@ -21,6 +23,7 @@ class Modifier implements ModifierBuilder
     private bool $changeOnApply = true;
     private bool $changeOnDurationReduction = false;
     private bool $negative = false;
+    private bool $uniqueByUnitType = false;
 
     public function __construct(string $name, Category $category)
     {
@@ -50,6 +53,11 @@ class Modifier implements ModifierBuilder
     public function getSchool(): School
     {
         return $this->school;
+    }
+
+    public function source(Unit $unit): void
+    {
+        $this->source = $unit;
     }
 
     public function stacks(int $value): ModifierBuilder
@@ -145,6 +153,18 @@ class Modifier implements ModifierBuilder
         return $this;
     }
 
+    public function uniquePerUnit(): ModifierBuilder
+    {
+        $this->uniqueByUnitType = false;
+        return $this;
+    }
+
+    public function uniquePerUnitType(): ModifierBuilder
+    {
+        $this->uniqueByUnitType = true;
+        return $this;
+    }
+
     /**
      * Changes unit stacks count
      *
@@ -206,6 +226,9 @@ class Modifier implements ModifierBuilder
 
     public function areSame(Modifier $modifier): bool
     {
+        if ($this->source !== null && $this->uniqueByUnitType) {
+            return $this->source->getTypeId() === $modifier->source->getTypeId();
+        }
         return $this->id === $modifier->id;
     }
 
@@ -243,6 +266,7 @@ class Modifier implements ModifierBuilder
         $copy->changeOnApply = $this->changeOnApply;
         $copy->changeOnDurationReduction = $this->changeOnDurationReduction;
         $copy->negative = $this->negative;
+        $copy->uniqueByUnitType = $this->uniqueByUnitType;
         return $copy;
     }
 

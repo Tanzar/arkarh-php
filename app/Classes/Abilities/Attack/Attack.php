@@ -8,8 +8,8 @@ use App\Classes\Abilities\Targeting\TargetEnemies;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Combat\Battlefield;
-use App\Classes\Modifiers\Base\ModifierBuilder;
 use App\Classes\Modifiers\Base\Category;
+use App\Classes\Modifiers\Base\Modifier;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 use Illuminate\Support\Collection;
@@ -89,9 +89,11 @@ class Attack extends Ability
         $this->targetSelection = new TargetEnemies($primaryTargetSelection);
     }
 
-    public function addModifier(ModifierBuilder $builder): void
+    public function addModifier(Modifier $builder): void
     {
         $builder->negative();
+        $source = $this->getSource();
+        $builder->source($this->getSource());
         $this->modifiers->add($builder);
     }
 
