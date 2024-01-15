@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Classes\Abilities\Shared;
+
+use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 
 interface AbilityBuilder
@@ -14,4 +16,6 @@ interface AbilityBuilder
     public function initialCooldown(int $cooldown): self;
 
     public function cooldown(int $cooldown): self;
+
+    public function school(School $school): self;
 }

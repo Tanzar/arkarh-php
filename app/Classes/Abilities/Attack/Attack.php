@@ -24,8 +24,6 @@ class Attack extends Ability
 
     private bool $bothLines = false;
 
-    private School $school;
-
     private bool $piercing = false;
 
     private float $physicalMultiplier = 0.05;
@@ -57,11 +55,6 @@ class Attack extends Ability
     public function setArea(int $area): void
     {
         $this->area = $area;
-    }
-
-    public function setSchool(School $school): void
-    {
-        $this->school = $school;
     }
 
     public function setPiercing(): void
@@ -99,7 +92,7 @@ class Attack extends Ability
 
     protected function action(Battlefield $battlefield): bool
     {
-        if ($this->school === School::Uncategorized) {
+        if ($this->getSchool() === School::Uncategorized) {
             return false;
         }
         $source = $this->getSource();
@@ -116,7 +109,7 @@ class Attack extends Ability
         /** @var Unit $target */
         foreach ($targets as $target) {
             $damage = $this->calculateDamage($target, $attack, $spellPower);
-            $damageTaken = $target->takeDamage($damage, $this->school, $this->piercing);
+            $damageTaken = $target->takeDamage($damage, $this->getSchool(), $this->piercing);
             if ($damageTaken > 0) {
                 foreach ($this->modifiers as $builder) {
                     $modifier = $builder->build();
@@ -132,7 +125,7 @@ class Attack extends Ability
 
     private function calculateDamage(Unit $target, int $attack, int $spellPower): int
     {
-        if ($this->school === School::Physical) {
+        if ($this->getSchool() === School::Physical) {
             return $this->calculatePhysicalDamage($attack, $target);
         } else {
             return $this->calculateSpellDamage($spellPower);
@@ -154,7 +147,7 @@ class Attack extends Ability
 
     private function combatText(unit $target, int $damageTaken): string
     {
-        return $target->getName() . ' takes ' . $damageTaken . ' ' . $this->school->value . ' damage,';
+        return $target->getName() . ' takes ' . $damageTaken . ' ' . $this->getSchool()->value . ' damage,';
     }
 
     private function lifesteal(int $lifesteal, int $damageTaken): void

@@ -4,6 +4,7 @@ namespace App\Classes\Abilities\Shared;
 
 use App\Classes\Combat\Battlefield;
 use App\Classes\Combat\CombatLog;
+use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\Unit;
 
 abstract class Ability
@@ -19,6 +20,8 @@ abstract class Ability
     private int $defaultCooldown = self::DEFAULT_COOLDOWN;
 
     private Trigger $trigger = Trigger::Action;
+
+    private School $school = School::Uncategorized;
 
     private Unit $source;
 
@@ -69,6 +72,24 @@ abstract class Ability
     protected function setTrigger(Trigger $trigger): void
     {
         $this->trigger = $trigger;
+    }
+
+    /**
+     * Get the value of school
+     */ 
+    public function getSchool(): School
+    {
+        return $this->school;
+    }
+
+    /**
+     * Set the value of school
+     *
+     * @return  self
+     */ 
+    public function setSchool($school): void
+    {
+        $this->school = $school;
     }
 
     public function getSource(): Unit
