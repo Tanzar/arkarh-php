@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Modifiers\Base;
+namespace App\Classes\Modifiers;
 
 enum Category: string
 {

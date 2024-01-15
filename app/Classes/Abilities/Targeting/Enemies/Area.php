@@ -6,7 +6,7 @@ use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Combat\Battlefield;
 use App\Classes\Combat\PositionFormula;
 use App\Classes\Combat\Side;
-use App\Classes\Modifiers\Base\Category;
+use App\Classes\Modifiers\Category;
 use App\Classes\Units\Abstracts\Unit;
 use Illuminate\Support\Collection;
 

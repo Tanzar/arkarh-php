@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Classes\Modifiers\Base;
+namespace App\Classes\Modifiers;
 
-use App\Classes\Shared\Utility\IdGenerator;
 use Illuminate\Support\Collection;
 
 class ModifierBuilderContainer

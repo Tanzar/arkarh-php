@@ -3,8 +3,8 @@
 namespace App\Classes\Units\Patterns\Testers;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
-use App\Classes\Modifiers\Base\Category;
-use App\Classes\Modifiers\Base\ModifierBuilder;
+use App\Classes\Modifiers\Category;
+use App\Classes\Modifiers\ModifierBuilder;
 use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\UnitBuilder;
 use App\Classes\Units\Abstracts\UnitPattern;

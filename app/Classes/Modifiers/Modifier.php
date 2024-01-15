@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Modifiers\Base;
+namespace App\Classes\Modifiers;
 
 use App\Classes\Shared\Types\Dispells;
 use App\Classes\Shared\Types\School;
