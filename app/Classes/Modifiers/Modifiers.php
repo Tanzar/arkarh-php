@@ -42,9 +42,10 @@ class Modifiers
 
     private function updateModifiers(Collection $mods): void
     {
+        /** @var Modifier $mod */
         foreach ($mods as $key => $mod) {
             $mod->reduceDuration();
-            if ($mod->getDuration() === 0 || $mod->getStacks() === 0) {
+            if ($mod->shouldRemove()) {
                 $mods->forget($key);
             }
         }

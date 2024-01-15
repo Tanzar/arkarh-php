@@ -611,4 +611,9 @@ class Unit
     {
         $this->position = $position;
     }
+
+    public function update(): void
+    {
+        $this->modifiers->update();
+    }
 }

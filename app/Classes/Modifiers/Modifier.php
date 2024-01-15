@@ -252,6 +252,11 @@ class Modifier implements ModifierBuilder
         return !$this->negative;
     }
 
+    public function shouldRemove(): bool
+    {
+        return $this->duration === 0 || $this->stacks === 0;
+    }
+
     public function build(): Modifier
     {
         $copy = new Modifier($this->name, $this->category);

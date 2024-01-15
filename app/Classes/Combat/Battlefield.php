@@ -105,6 +105,7 @@ class Battlefield
             $unit->damageMorale($this->moraleDamage);
         }
         $this->refreshSides();
+
         return $this->determineState();
     }
 

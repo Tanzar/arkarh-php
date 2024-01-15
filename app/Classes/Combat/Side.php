@@ -139,6 +139,16 @@ class Side
         $this->regenerateReserves();
         $front = $this->checkLine($this->front);
         $back = $this->checkLine($this->back);
+        /** @var Unit $unit */
+        foreach ($this->front as $position => $unit) {
+            if ($unit !== null) {
+                $unit->update();
+            }
+            $backUnit = $this->back->get($position);
+            if ($backUnit !== null) {
+                $backUnit->update();
+            }
+        }
         return $back->merge($front);
     }
 
