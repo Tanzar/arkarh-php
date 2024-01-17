@@ -8,6 +8,8 @@ use App\Classes\Units\Abstracts\UnitPattern;
 
 class TankDummy extends UnitPattern
 {
+
+    protected function __construct() { }
     protected function setName(): string
     {
         return 'Tank Dummy';

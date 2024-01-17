@@ -13,10 +13,10 @@ class Testers extends Faction
 
     protected function units(FactionUnitsInterface $units): void
     {
-        $units->add('fighter', new AttackDummy());
-        $units->add('tank', new TankDummy());
-        $units->add('archer', new ArcherDummy());
-        $units->add('wizard', new WizardDummy());
+        $units->add('fighter', AttackDummy::getInstance());
+        $units->add('tank', TankDummy::getInstance());
+        $units->add('archer', ArcherDummy::getInstance());
+        $units->add('wizard', WizardDummy::getInstance());
     }
 
     protected function canPlayerSelect(): bool { return true; }

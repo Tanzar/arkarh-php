@@ -4,21 +4,25 @@ namespace App\Classes\Units\Abstracts;
 
 abstract class UnitPattern
 {
-    private string $name;
-
-    private string $icon;
-
     private UnitBuilder $builder;
 
-    public function __construct()
+    private static array $instances = [];
+
+    protected abstract function __construct();
+
+    public static function getInstance(): self
     {
-        $this->name = $this->setName();
-        $this->icon = $this->setIcon();
-        $this->builder = new UnitBuilder(
-            $this->name, 
-            $this->icon
-        );
-        $this->pattern($this->builder);
+        $calledClass = get_called_class();
+        if (!isset(self::$instances[$calledClass])) {
+            $instance = new $calledClass();
+            $instance->builder = new UnitBuilder(
+                $instance->setName(), 
+                $instance->setIcon()
+            );
+            $instance->pattern($instance->builder);
+            self::$instances[$calledClass] = $instance;
+        }
+        return self::$instances[$calledClass];
     }
 
     protected abstract function setName(): string;

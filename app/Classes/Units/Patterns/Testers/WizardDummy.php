@@ -12,6 +12,8 @@ use App\Classes\Units\Abstracts\UnitPattern;
 class WizardDummy extends UnitPattern
 {
 
+    protected function __construct() { }
+
     protected function setName(): string
     {
         return 'Wizard Dummy';

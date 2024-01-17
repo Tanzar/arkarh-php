@@ -9,6 +9,8 @@ use App\Classes\Units\Abstracts\UnitPattern;
 class AttackDummy extends UnitPattern
 {
 
+    protected function __construct() { }
+
     protected function setName(): string { return 'Attack Dummy'; }
 
     protected function setIcon(): string
