@@ -19,6 +19,9 @@ class Testers extends Faction
         $units->add('wizard', WizardDummy::getInstance());
     }
 
-    protected function canPlayerSelect(): bool { return true; }
+    public function canPlayerSelect(): bool
+    {
+        return true;
+    }
 
 }

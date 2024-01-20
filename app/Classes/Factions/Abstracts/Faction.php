@@ -12,15 +12,20 @@ abstract class Faction implements FactionUnitsInterface
 
     private Collection $unitsPatterns;
 
-    private bool $playable;
-
     public function __construct()
     {
         $this->unitsPatterns = collect();
-        $this->units($this);
-        $this->playable = $this->canPlayerSelect();
     }
 
+    public function getUnit(string $scriptName): Unit
+    {
+        if ($this->unitsPatterns->count() === 0) {
+            $this->units($this);
+        }
+        $pattern = $this->getUnitPattern($scriptName);
+        return $pattern->make();
+    }
+    
     protected abstract function units(FactionUnitsInterface $units): void;
 
     public function add(string $scriptName, UnitPattern $unit): void 
@@ -28,12 +33,6 @@ abstract class Faction implements FactionUnitsInterface
         if($this->unitsPatterns->doesntContain($scriptName)) {
             $this->unitsPatterns->put($scriptName, $unit);
         }
-    }
-
-    public function getUnit(string $scriptName): Unit
-    {
-        $pattern = $this->getUnitPattern($scriptName);
-        return $pattern->make();
     }
 
     private function getUnitPattern(string $scriptName): UnitPattern
@@ -45,11 +44,6 @@ abstract class Faction implements FactionUnitsInterface
         return $pattern;
     }
 
-    protected abstract function canPlayerSelect(): bool;
-
-    public function isPlayable(): bool
-    {
-        return $this->playable;
-    }
+    public abstract function canPlayerSelect(): bool;
 
 }
