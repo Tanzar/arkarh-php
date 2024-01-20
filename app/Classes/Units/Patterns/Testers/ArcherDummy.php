@@ -27,7 +27,7 @@ class ArcherDummy extends UnitPattern
             ->prefersBack()
             ->speed(6)
             ->health(50)
-            ->addAttack(function(AttackBuilder $attack) {
+            ->addAttack('shoot', function(AttackBuilder $attack) {
                 $attack
                     ->name('Range attack')
                     ->damage(20)

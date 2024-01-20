@@ -27,7 +27,7 @@ class TankDummy extends UnitPattern
             ->threat(10)
             ->speed(1)
             ->health(300)
-            ->addAttack(function(AttackBuilder $attack) {
+            ->addAttack('strike', function(AttackBuilder $attack) {
                 $attack->name('Dummy slap')->damage(5);
             });
     }

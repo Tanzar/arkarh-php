@@ -23,7 +23,7 @@ class AttackDummy extends UnitPattern
         $builder
             ->speed(5)
             ->health(100)
-            ->addAttack(function(AttackBuilder $attack) {
+            ->addAttack('strike', function(AttackBuilder $attack) {
                 $attack->name('Melee strike')->damage(10);
             });
     }

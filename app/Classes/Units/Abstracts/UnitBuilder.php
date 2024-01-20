@@ -91,11 +91,11 @@ class UnitBuilder
         return $this;
     }
 
-    public function addAttack(Closure $function): UnitBuilder
+    public function addAttack(string $sctiprName, Closure $function): UnitBuilder
     {
         $builder = new AttackBuilder();
         $function($builder);
-        $this->abilities->push($builder);
+        $this->abilities->put($sctiprName, $builder);
         return $this;
     }
 
@@ -175,9 +175,9 @@ class UnitBuilder
     private function addAbilities(Unit $unit): void
     {
         /** @var AbilityBuilder $builder */
-        foreach ($this->abilities as $builder) {
+        foreach ($this->abilities as $scriptName => $builder) {
             $ability = $builder->build($unit);
-            $unit->addAbility($ability);
+            $unit->addAbility($scriptName, $ability);
         }
     }
 

@@ -501,9 +501,9 @@ class Unit
         }
     }
 
-    public function addAbility(Ability $ability): void
+    public function addAbility(string $scriptName, Ability $ability): void
     {
-        $this->abilities->add($ability);
+        $this->abilities->add($scriptName, $ability);
     }
 
     public function addTag(Tag $tag): void

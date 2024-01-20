@@ -29,7 +29,7 @@ class WizardDummy extends UnitPattern
             ->prefersBack()
             ->speed(4)
             ->health(50)
-            ->addAttack(function(AttackBuilder $attack) {
+            ->addAttack('bombard', function(AttackBuilder $attack) {
             $attack->name('Arcane Bombardment')
                 ->initialCooldown(1)
                 ->damage(20)
