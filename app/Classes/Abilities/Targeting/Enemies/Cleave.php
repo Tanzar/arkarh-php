@@ -11,7 +11,7 @@ use App\Classes\Modifiers\Category;
 use App\Classes\Units\Abstracts\Unit;
 use Illuminate\Support\Collection;
 
-class Area implements Targeting
+class Cleave implements Targeting
 {
     private int $range;
     private int $radius;
@@ -52,9 +52,11 @@ class Area implements Targeting
             if ($unit !== null && $unit->isAlive()) {
                 $targets->push($unit);
             }
-            $unit = $back->get($position);
-            if ($unit !== null && $unit->isAlive()) {
-                $targets->push($unit);
+            if ($unit === null || $unit->isDead()) {
+                $unit = $back->get($position);
+                if ($unit !== null && $unit->isAlive()) {
+                    $targets->push($unit);
+                }
             }
         }
         return $targets;

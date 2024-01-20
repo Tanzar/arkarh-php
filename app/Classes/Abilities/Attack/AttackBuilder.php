@@ -2,11 +2,14 @@
 
 namespace App\Classes\Abilities\Attack;
 
+use App\Classes\Abilities\Targeting\Enemies\Single;
 use App\Classes\Abilities\Targeting\Primary\HighestThreat;
 use App\Classes\Abilities\Targeting\Primary\LowestHealth;
-use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
+use App\Classes\Abilities\Targeting\Abstracts\Targeting;
+use App\Classes\Abilities\Targeting\Enemies\Area;
+use App\Classes\Abilities\Targeting\Enemies\Cleave;
 use App\Classes\Modifiers\Category;
 use App\Classes\Modifiers\Modifier;
 use App\Classes\Shared\Types\School;
@@ -24,26 +27,19 @@ class AttackBuilder implements AbilityBuilder
 
     private int $initialCooldown = Ability::DEFAULT_COOLDOWN;
 
-    private int $range = 1;
-
     private int $damage = 1;
-
-    private int $area = 0;
-
-    private bool $bothLines = false;
 
     private School $school = School::Physical;
 
     private bool $piercing = false;
 
-    private SelectStrategy $targetSelection;
+    private ?Targeting $targetSelection;
 
     private Collection $modifiers;
 
     public function __construct()
     {
         $this->modifiers = new Collection();
-        $this->targetSelection = new HighestThreat();
     }
 
     public function name(string $name): AttackBuilder
@@ -70,33 +66,9 @@ class AttackBuilder implements AbilityBuilder
         return $this;
     }
 
-    public function range(int $range): AttackBuilder
-    {
-        $this->range = $range;
-        return $this;
-    }
-
     public function damage(int $damage): AttackBuilder
     {
         $this->damage = $damage;
-        return $this;
-    }
-
-    public function area(int $area): AttackBuilder
-    {
-        $this->area = $area;
-        return $this;
-    }
-
-    public function strikeBothLines(): AttackBuilder
-    {
-        $this->bothLines = true;
-        return $this;
-    }
-
-    public function strikeSingleLine(): AttackBuilder
-    {
-        $this->bothLines = false;
         return $this;
     }
 
@@ -126,15 +98,45 @@ class AttackBuilder implements AbilityBuilder
         return $this;
     }
 
-    public function targetHighestThreat(): AttackBuilder
+    public function singleTargetByThreat(int $range): AttackBuilder
     {
-        $this->targetSelection = new HighestThreat();
+        $priority = new HighestThreat();
+        $this->targetSelection = new Single($priority, $range);
         return $this;
     }
 
-    public function targetLowestHealth(): AttackBuilder
+    public function singleTargetByLowestHealth(int $range): AttackBuilder
     {
-        $this->targetSelection = new LowestHealth();
+        $priority = new LowestHealth();
+        $this->targetSelection = new Single($priority, $range);
+        return $this;
+    }
+
+    public function cleaveByThreat(int $range, int $radius): AttackBuilder
+    {
+        $priority = new HighestThreat();
+        $this->targetSelection = new Cleave($priority, $range, $radius);
+        return $this;
+    }
+
+    public function cleaveByLowestHealth(int $range, int $radius): AttackBuilder
+    {
+        $priority = new LowestHealth();
+        $this->targetSelection = new Cleave($priority, $range, $radius);
+        return $this;
+    }
+
+    public function areaByThreat(int $range, int $radius): AttackBuilder
+    {
+        $priority = new HighestThreat();
+        $this->targetSelection = new Area($priority, $range, $radius);
+        return $this;
+    }
+
+    public function areaByLowestHealth(int $range, int $radius): AttackBuilder
+    {
+        $priority = new LowestHealth();
+        $this->targetSelection = new Area($priority, $range, $radius);
         return $this;
     }
 
@@ -142,21 +144,16 @@ class AttackBuilder implements AbilityBuilder
         $attack = new Attack($this->name, $unit);
         $attack->setCharges($this->charges);
         $attack->setCooldown($this->cooldown, $this->initialCooldown);
-        $attack->setRange($this->range);
         $attack->setDamage($this->damage);
-        $attack->setArea($this->area);
         if ($this->piercing) {
             $attack->setPiercing();
         } else {
             $attack->unsetPiercing();
         }
-        if ($this->bothLines) {
-            $attack->setStrikeBothLines();
-        } else {
-            $attack->setStrikeSingleLine();
-        }
         $attack->setSchool($this->school);
-        $attack->setTargetSelection($this->targetSelection);
+        if (isset($this->targetSelection)) {
+            $attack->setTargeting($this->targetSelection);
+        }
         foreach ($this->modifiers as $builder) {
             $attack->addModifier($builder);
         }

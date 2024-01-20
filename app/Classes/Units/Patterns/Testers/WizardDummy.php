@@ -35,9 +35,7 @@ class WizardDummy extends UnitPattern
                 ->damage(20)
                 ->piercing()
                 ->school(School::Arcane)
-                ->area(2)
-                ->range(5)
-                ->strikeBothLines()
+                ->areaByThreat(5, 2)
                 ->applies(
                     'Arcane Weakness', 
                     Category::DamageTakenMultiplier, 

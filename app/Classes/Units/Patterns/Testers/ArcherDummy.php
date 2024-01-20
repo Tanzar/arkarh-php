@@ -32,7 +32,7 @@ class ArcherDummy extends UnitPattern
                     ->name('Range attack')
                     ->damage(20)
                     ->piercing()
-                    ->range(10)
+                    ->singleTargetByThreat(10)
                     ->cooldown(1);
             });
     }

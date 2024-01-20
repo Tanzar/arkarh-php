@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Classes\Abilities\Targeting\Primary;
+namespace App\Classes\Abilities\Targeting\Abstracts;
 
 use App\Classes\Combat\PositionFormula;
 use App\Classes\Combat\Side;

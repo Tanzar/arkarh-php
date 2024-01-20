@@ -2,6 +2,8 @@
 
 namespace App\Classes\Abilities\Attack;
 
+use App\Classes\Abilities\Targeting\Abstracts\Targeting;
+use App\Classes\Abilities\Targeting\Enemies\Single;
 use App\Classes\Abilities\Targeting\Primary\HighestThreat;
 use App\Classes\Abilities\Targeting\Primary\SelectStrategy;
 use App\Classes\Abilities\Targeting\Enemies\Area;
@@ -16,13 +18,7 @@ use Illuminate\Support\Collection;
 
 class Attack extends Ability
 {
-    private int $range = 1;
-
     private int $damage = 1;
-
-    private int $area = 0;
-
-    private bool $bothLines = false;
 
     private bool $piercing = false;
 
@@ -30,7 +26,7 @@ class Attack extends Ability
 
     private float $magicMultiplier = 0.1;
 
-    private Area $targetSelection;
+    private Targeting $targeting;
 
     private Collection $modifiers;
 
@@ -39,22 +35,12 @@ class Attack extends Ability
         parent::__construct($name, $unit);
         $this->setTrigger(Trigger::Action);
         $this->modifiers = new Collection();
-        $this->targetSelection = new Area(new HighestThreat());
-    }
-
-    public function setRange(int $range): void
-    {
-        $this->range = $range;
+        $this->targeting = new Single(new HighestThreat());
     }
 
     public function setDamage(int $damage): void
     {
         $this->damage = $damage;
-    }
-
-    public function setArea(int $area): void
-    {
-        $this->area = $area;
     }
 
     public function setPiercing(): void
@@ -67,19 +53,9 @@ class Attack extends Ability
         $this->piercing = false;
     }
 
-    public function setStrikeBothLines(): void
+    public function setTargeting(Targeting $targeting): void
     {
-        $this->bothLines = true;
-    }
-
-    public function setStrikeSingleLine(): void
-    {
-        $this->bothLines = false;
-    }
-
-    public function setTargetSelection(SelectStrategy $primaryTargetSelection): void
-    {
-        $this->targetSelection = new Area($primaryTargetSelection);
+        $this->targeting = $targeting;
     }
 
     public function addModifier(Modifier $builder): void
@@ -96,7 +72,7 @@ class Attack extends Ability
             return false;
         }
         $source = $this->getSource();
-        $targets = $this->targetSelection->select($battlefield, $source, $this->range, $this->area, $this->bothLines);
+        $targets = $this->targeting->select($battlefield, $source);
         return $this->strikeTargets($targets);
     }
 
