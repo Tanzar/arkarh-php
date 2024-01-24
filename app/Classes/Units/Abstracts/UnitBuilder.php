@@ -6,6 +6,7 @@ use App\Classes\Abilities\Attack\AttackBuilder;
 use App\Classes\Abilities\Shared\AbilityBuilder;
 use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Tag\Unit\Tag;
+use App\Classes\Tag\Unit\Tags\Living;
 use Closure;
 use Illuminate\Support\Collection;
 
@@ -183,9 +184,16 @@ class UnitBuilder
 
     private function addTags(Unit $unit): void
     {
+        $isUncategorized = true;
         /** @var Tag $tag */
         foreach ($this->tags as $tag) {
             $unit->addTag($tag);
+            if ($tag->getUniqueGroup() === 'category') {
+                $isUncategorized = false;
+            }
+        }
+        if ($isUncategorized) {
+            $unit->addTag(new Living());
         }
     }
 }
