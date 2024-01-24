@@ -378,13 +378,13 @@ class Unit
 
     public function dispellNegatives(Dispells $dispell): bool
     {
-        $this->act(Trigger::Dispell);
+        $this->abilities->act(Trigger::Dispell);
         return $this->modifiers->dispellNegatives($dispell);
     }
     
     public function dispellPositivess(Dispells $dispell): bool
     {
-        $this->act(Trigger::Dispell);
+        $this->abilities->act(Trigger::Dispell);
         return $this->modifiers->dispellNegatives($dispell);
     }
 
@@ -410,11 +410,11 @@ class Unit
             $damage = $this->limitDamage($damage);
             $healthLoss = min($this->health, $damage);
             if ($healthLoss > 0) {
-                $this->act(Trigger::DamageTake);
+                $this->abilities->act(Trigger::DamageTake);
             }
             $this->health -= $healthLoss;
             if ($this->isDead()) {
-                $this->act(Trigger::Death);
+                $this->abilities->act(Trigger::Death);
             }
             return $healthLoss;
         }
@@ -475,7 +475,7 @@ class Unit
             $missingHealth = $this->maxHealth - $this->health;
             $heal = min($heal, $missingHealth);
             if ($heal > 0) {
-                $this->act(Trigger::Heal);
+                $this->abilities->act(Trigger::Heal);
             }
             $this->health += $heal;
             return $heal;
@@ -554,9 +554,7 @@ class Unit
     {
         if ($this->isAlive()) {
             $this->triggerHealOverTime();
-            if ($this->isAlive()) {
-                $this->abilities->act($trigger);
-            }
+            $this->abilities->act($trigger);
         }
     }
 
