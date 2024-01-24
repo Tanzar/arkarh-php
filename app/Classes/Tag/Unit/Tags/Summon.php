@@ -2,8 +2,8 @@
 
 namespace App\Classes\Tag\Unit\Tags;
 
-use App\Classes\Modifiers\Base\ModifierBuilderContainer;
 use App\Classes\Tag\Unit\Tag;
+use App\Classes\Tag\Unit\TagBuilder;
 
 class Summon extends Tag
 {
@@ -18,9 +18,9 @@ class Summon extends Tag
         return 'summon';
     }
 
-    protected function modifiers(ModifierBuilderContainer $modifiers): void
+    protected function alter(TagBuilder $builder): void
     {
-        
+
     }
 
 }

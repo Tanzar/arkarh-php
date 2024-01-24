@@ -2,8 +2,9 @@
 
 namespace App\Classes\Tag\Unit\Tags;
 
-use App\Classes\Modifiers\Base\ModifierBuilderContainer;
 use App\Classes\Tag\Unit\Tag;
+use App\Classes\Tag\Unit\TagBuilder;
+use App\Classes\Units\Abstracts\Unit;
 
 class Demon extends Tag
 {
@@ -18,7 +19,7 @@ class Demon extends Tag
         return "category";
     }
 
-    protected function modifiers(ModifierBuilderContainer $modifiers): void
+    protected function alter(TagBuilder $builder): void
     {
         
     }

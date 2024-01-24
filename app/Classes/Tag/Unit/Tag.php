@@ -2,31 +2,28 @@
 
 namespace App\Classes\Tag\Unit;
 
-use App\Classes\Modifiers\Base\ModifierBuilder;
-use App\Classes\Modifiers\Base\ModifierBuilderContainer;
+use App\Classes\Modifiers\Category;
+use App\Classes\Modifiers\Modifier;
+use App\Classes\Units\Abstracts\Unit;
+use Closure;
 
-abstract class Tag
+abstract class Tag implements TagBuilder
 {
 
     private string $name;
     private string $uniqueGroup;
 
-    private ModifierBuilderContainer $modifiers;
+    private ?Unit $unit = null;
 
     public function __construct()
     {
         $this->name = $this->name();
         $this->uniqueGroup = $this->uniqueGroup();
-        $this->modifiers = new ModifierBuilderContainer();
-        $this->modifiers($this->modifiers);
     }
 
-    protected abstract function name() : string;
+    abstract protected function name() : string;
 
-    protected abstract function uniqueGroup() : string;
-
-    protected abstract function modifiers(ModifierBuilderContainer $modifiers): void;
-
+    abstract protected function uniqueGroup() : string;
 
     public function getName(): string
     {
@@ -38,13 +35,23 @@ abstract class Tag
         return $this->uniqueGroup;
     }
 
-    public function getModifiers(): array
+    public function alterUnit(Unit $unit): void
     {
-        $modifiers = [];
-        /** @var ModifierBuilder $builder */
-        foreach ($this->modifiers->getModifiers() as $builder) {
-            $modifiers[] = $builder->build();
-        }
-        return $modifiers;
+        $this->unit = $unit;
+        $this->alter($this);
+        $this->unit = null;
     }
+
+    abstract protected function alter(TagBuilder $builder): void;
+
+    public function modifier(string $name, Category $category, Closure $function): TagBuilder
+    {
+        $modifier = new Modifier($name, $category);
+        $function($modifier);
+        $this->unit->applyModifier($modifier);
+        return $this;
+    }
+
+
+
 }

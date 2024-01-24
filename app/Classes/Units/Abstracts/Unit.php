@@ -509,10 +509,7 @@ class Unit
     public function addTag(Tag $tag): void
     {
         $this->tags->add($tag);
-        $modifiers = $tag->getModifiers();
-        foreach ($modifiers as $modifier) {
-            $this->modifiers->add($modifier);
-        }
+        $tag->alterUnit($this);
     }
 
     public function setAttacker(): void
