@@ -6,7 +6,6 @@ use App\Classes\Abilities\Attack\AttackBuilder;
 use App\Classes\Modifiers\Category;
 use App\Classes\Modifiers\ModifierBuilder;
 use App\Classes\Shared\Types\School;
-use App\Classes\Tag\Unit\Tags\Vampire;
 use App\Classes\Units\Abstracts\UnitBuilder;
 use App\Classes\Units\Abstracts\UnitPattern;
 
@@ -43,8 +42,7 @@ class WizardDummy extends UnitPattern
                     function(ModifierBuilder $modifier) {
                         $modifier->school(School::Arcane)->stackValue(0.5)->maxStacks(2);
                     });
-        })
-        ->tag(new Vampire());
+        });
             
     }
 

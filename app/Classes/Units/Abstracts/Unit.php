@@ -558,7 +558,9 @@ class Unit
     private function triggerHealOverTime(): void
     {
         $hots = $this->modifiers->getModifiers(Category::HealOverTime);
-        CombatLog::getInstance()->nextStage();
+        if ($hots->count() > 0) {
+            CombatLog::getInstance()->nextStage();
+        }
         foreach ($hots as $modifier) {
             $value = $modifier->getTotalValue();
             $healingTaken = $this->heal($value);

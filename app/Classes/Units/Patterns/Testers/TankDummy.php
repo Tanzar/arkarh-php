@@ -3,6 +3,7 @@
 namespace App\Classes\Units\Patterns\Testers;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
+use App\Classes\Tag\Unit\Tags\Vampire;
 use App\Classes\Units\Abstracts\UnitBuilder;
 use App\Classes\Units\Abstracts\UnitPattern;
 
@@ -29,7 +30,8 @@ class TankDummy extends UnitPattern
             ->health(300)
             ->addAttack('strike', function(AttackBuilder $attack) {
                 $attack->name('Dummy slap')->damage(5);
-            });
+            })
+            ->tag(new Vampire());
     }
 
 }
