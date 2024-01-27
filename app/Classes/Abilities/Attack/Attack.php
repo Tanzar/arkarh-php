@@ -61,7 +61,6 @@ class Attack extends Ability
     public function addModifier(Modifier $builder): void
     {
         $builder->negative();
-        $source = $this->getSource();
         $builder->source($this->getSource());
         $this->modifiers->add($builder);
     }
@@ -123,7 +122,7 @@ class Attack extends Ability
 
     private function combatText(unit $target, int $damageTaken): string
     {
-        return $target->getName() . ' takes ' . $damageTaken . ' ' . $this->getSchool()->value . ' damage,';
+        return $target->getName() . ' takes ' . $damageTaken . ' ' . $this->getSchool()->value . ' damage.';
     }
 
     private function lifesteal(int $lifesteal, int $damageTaken): void

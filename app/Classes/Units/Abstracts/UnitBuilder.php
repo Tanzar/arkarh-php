@@ -3,6 +3,7 @@
 namespace App\Classes\Units\Abstracts;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
+use App\Classes\Abilities\Heal\HealBuilder;
 use App\Classes\Abilities\Shared\AbilityBuilder;
 use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Tag\Unit\Tag;
@@ -95,6 +96,14 @@ class UnitBuilder
     public function addAttack(string $sctiprName, Closure $function): UnitBuilder
     {
         $builder = new AttackBuilder();
+        $function($builder);
+        $this->abilities->put($sctiprName, $builder);
+        return $this;
+    }
+
+    public function addHeal(string $sctiprName, Closure $function): UnitBuilder
+    {
+        $builder = new HealBuilder();
         $function($builder);
         $this->abilities->put($sctiprName, $builder);
         return $this;

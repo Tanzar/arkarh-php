@@ -50,25 +50,39 @@ class AttackBuilder implements AbilityBuilder
 
     public function charges(int $charges): AttackBuilder
     {
-        $this->charges = $charges;
+        if ($charges > 0) {
+            $this->charges = $charges;
+        }
+        return $this;
+    }
+
+    public function unlimitedCharges(): AttackBuilder
+    {
+        $this->charges = -1;
         return $this;
     }
 
     public function initialCooldown(int $cooldown): AttackBuilder
     {
-        $this->initialCooldown = $cooldown;
+        if ($cooldown >= 0) {
+            $this->initialCooldown = $cooldown;
+        }
         return $this;
     }
 
     public function cooldown(int $cooldown): AttackBuilder
     {
-        $this->cooldown = $cooldown;
+        if ($cooldown >= 0) {
+            $this->cooldown = $cooldown;
+        }
         return $this;
     }
 
     public function damage(int $damage): AttackBuilder
     {
-        $this->damage = $damage;
+        if ($this->damage > 0) {
+            $this->damage = $damage;
+        }
         return $this;
     }
 

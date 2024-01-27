@@ -166,6 +166,12 @@ class Unit
         return $this->health;
     }
 
+    public function getHealthPercentage(): float
+    {
+        $totalHealth = $this->getModifiedValue($this->maxHealth, Category::Health, 1);
+        return ($this->health / $totalHealth) * 100;
+    }
+
     /**
      * Set the value of health, min 1
      */ 

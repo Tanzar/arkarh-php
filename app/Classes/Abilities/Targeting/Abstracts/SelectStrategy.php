@@ -37,11 +37,6 @@ abstract class SelectStrategy
 
     protected abstract function reset(): void;
 
-    private function inRange(int $position, int $startPosition, int $range): bool
-    {
-        return $position >= $startPosition - $range && $position <= $startPosition + $range;
-    }
-
     private function verify(?Unit $unit): void
     {
         if ($unit !== null && $unit->isAlive()) {

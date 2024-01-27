@@ -42,7 +42,9 @@ class CombatService
                 "8": "testers.unit.fighter"
             },
             "back": {
-                "7": "testers.unit.wizard"
+                "6": "testers.unit.medic",
+                "7": "testers.unit.wizard",
+                "8": "testers.unit.medic"
             },
             "reserves": {}
         }';

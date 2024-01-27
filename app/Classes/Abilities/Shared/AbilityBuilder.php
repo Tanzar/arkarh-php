@@ -13,6 +13,8 @@ interface AbilityBuilder
 
     public function charges(int $charges): self;
 
+    public function unlimitedCharges(): self;
+
     public function initialCooldown(int $cooldown): self;
 
     public function cooldown(int $cooldown): self;
