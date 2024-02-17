@@ -3,6 +3,10 @@
 namespace App\Classes\Units\Patterns\Testers;
 
 use App\Classes\Abilities\Attack\AttackBuilder;
+use App\Classes\Abilities\Debuff\DebuffBuilder;
+use App\Classes\Modifiers\Category;
+use App\Classes\Modifiers\ModifierBuilder;
+use App\Classes\Shared\Types\School;
 use App\Classes\Units\Abstracts\UnitBuilder;
 use App\Classes\Units\Abstracts\UnitPattern;
 
@@ -34,6 +38,18 @@ class ArcherDummy extends UnitPattern
                     ->piercing()
                     ->singleTargetByThreat(10)
                     ->cooldown(1);
+            })
+            ->addDebuff('mark', function(DebuffBuilder $debuff) {
+                $debuff
+                    ->name("Hunter mark")
+                    ->targetSingleHighestThreat(20)
+                    ->applies('Mark', Category::DamageTakenMultiplier, function(ModifierBuilder $modifier) {
+                        $modifier
+                            ->stackValue(0.1)
+                            ->maxStacks(10)
+                            ->school(School::Physical)
+                            ->uniquePerUnitType();
+                    });
             });
     }
 
