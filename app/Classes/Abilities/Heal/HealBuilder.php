@@ -4,6 +4,7 @@ namespace App\Classes\Abilities\Heal;
 
 use App\Classes\Abilities\Shared\Ability;
 use App\Classes\Abilities\Shared\AbilityBuilder;
+use App\Classes\Abilities\Shared\BasicAbilityBuilder;
 use App\Classes\Abilities\Shared\Trigger;
 use App\Classes\Abilities\Targeting\Abstracts\Targeting;
 use App\Classes\Abilities\Targeting\Friendly\Area;
@@ -19,18 +20,11 @@ use Illuminate\Support\Collection;
 
 class HealBuilder implements AbilityBuilder
 {
-
-    private string $name = 'heal';
-
-    private int $charges = Ability::DEFAULT_CHARGES;
-    
-    private int $cooldown = Ability::DEFAULT_COOLDOWN;
-
-    private int $initialCooldown = Ability::DEFAULT_COOLDOWN;
+    use BasicAbilityBuilder;
 
     private int $value = 1;
 
-    private School $school = School::Physical;
+    private School $defaultSchool = School::Physical;
 
     private Trigger $trigger = Trigger::Action;
 
@@ -41,48 +35,6 @@ class HealBuilder implements AbilityBuilder
     public function __construct()
     {
         $this->modifiers = new Collection();
-    }
-
-    public function name(string $name): HealBuilder
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function charges(int $charges): HealBuilder
-    {
-        if ($charges > 0) {
-            $this->charges = $charges;
-        }
-        return $this;
-    }
-
-    public function unlimitedCharges(): HealBuilder
-    {
-        $this->charges = -1;
-        return $this;
-    }
-
-    public function initialCooldown(int $cooldown): HealBuilder
-    {
-        if ($cooldown >= 0) {
-            $this->initialCooldown = $cooldown;
-        }
-        return $this;
-    }
-
-    public function cooldown(int $cooldown): HealBuilder
-    {
-        if ($cooldown >= 0) {
-            $this->cooldown = $cooldown;
-        }
-        return $this;
-    }
-
-    public function school(School $school): HealBuilder
-    {
-        $this->school = $school;
-        return $this;
     }
 
     public function trigger(Trigger $trigger): HealBuilder
@@ -135,11 +87,12 @@ class HealBuilder implements AbilityBuilder
     public function build(Unit $unit): Ability
     {
         $heal = new Heal($this->name, $unit);
-        $heal->setCharges($this->charges);
-        $heal->setCooldown($this->cooldown, $this->initialCooldown);
+        $this->apply($heal);
+        if ($heal->getSchool() === School::Uncategorized) {
+            $heal->setSchool($this->defaultSchool);
+        }
         $heal->setValue($this->value);
         $heal->trigger($this->trigger);
-        $heal->setSchool($this->school);
         if (isset($this->targetSelection)) {
             $heal->setTargeting($this->targetSelection);
         }
