@@ -14,6 +14,7 @@ use App\Classes\Shared\Types\School;
 use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Tag\Unit\Tag;
 use App\Classes\Tag\Unit\Tags;
+use App\Classes\Units\Categories\Living;
 use App\Classes\Units\Escape\Standard;
 
 class Unit 
@@ -64,6 +65,8 @@ class Unit
 
     private Tags $tags;
 
+    private UnitCategory $category;
+
     private bool $isAttacker = false;
 
     private EscapeStrategy $escapeStrategy;
@@ -76,6 +79,7 @@ class Unit
         $this->id = IdGenerator::get();
         $this->name = $name;
         $this->icon = $icon;
+        $this->category = new Living();
         $this->modifiers = new Modifiers();
         $this->abilities = new Abilities();
         $this->tags = new Tags();
@@ -328,6 +332,16 @@ class Unit
         if ($threat > 0) {
             $this->threat = $threat;
         }
+    }
+
+    public function setCategory(UnitCategory $category): void
+    {
+        $this->category = $category;
+    }
+
+    public function getCategory(): UnitCategory
+    {
+        return $this->category;
     }
 
     public function prefersFront(?bool $prefersFront = null): bool

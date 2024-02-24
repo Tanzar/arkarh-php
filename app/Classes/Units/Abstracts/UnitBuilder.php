@@ -9,7 +9,6 @@ use App\Classes\Abilities\Heal\HealBuilder;
 use App\Classes\Abilities\Shared\AbilityBuilder;
 use App\Classes\Shared\Utility\IdGenerator;
 use App\Classes\Tag\Unit\Tag;
-use App\Classes\Tag\Unit\Tags\Living;
 use Closure;
 use Illuminate\Support\Collection;
 
@@ -30,6 +29,8 @@ class UnitBuilder
     private Collection $abilities;
 
     private Collection $tags;
+
+    private ?UnitCategory $category = null;
 
     public function __construct(string $name, string $icon)
     {
@@ -145,6 +146,12 @@ class UnitBuilder
         return $this;
     }
 
+    public function category(UnitCategory $category): UnitBuilder
+    {
+        $this->category = $category;
+        return $this;
+    }
+
     public function build(): Unit
     {
         $unit = new Unit(
@@ -158,6 +165,9 @@ class UnitBuilder
         $this->addAbilities($unit);
         $this->addTags($unit);
         $unit->prefersFront($this->prefersFront);
+        if (isset($this->category)) {
+            $unit->setCategory($this->category);
+        }
         return $unit;
     }
 
@@ -211,16 +221,9 @@ class UnitBuilder
 
     private function addTags(Unit $unit): void
     {
-        $isUncategorized = true;
         /** @var Tag $tag */
         foreach ($this->tags as $tag) {
             $unit->addTag($tag);
-            if ($tag->getUniqueGroup() === 'category') {
-                $isUncategorized = false;
-            }
-        }
-        if ($isUncategorized) {
-            $unit->addTag(new Living());
         }
     }
 }
